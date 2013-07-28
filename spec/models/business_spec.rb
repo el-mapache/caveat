@@ -17,4 +17,18 @@ describe Business do
     it { should have_many(:violations) }
     it { should have_many(:inspections) }
   end
+
+  context "validations" do
+    it { should validate_presence_of(:latitude) }
+    it { should validate_presence_of(:longitude) }
+    it { should validate_presence_of(:name) }
+    it "is invalid if latitude, longitude, and name are the same" do
+      businessA = FactoryGirl.create(:business)
+      expect { FactoryGirl.create(:business ) }.to raise_exception
+    end
+    
+    it "is valid if the lat and long are different" do
+      Business.create(name: "Tasti Dlite", latitude: "28.123456", longitude: "350.567890").should be_valid
+    end
+  end
 end

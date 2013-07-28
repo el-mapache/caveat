@@ -3,4 +3,7 @@ class Business < ActiveRecord::Base
 
   has_many :violations
   has_many :inspections
+
+  validates :latitude, :longitude, :name, presence: true
+  validates :name, uniqueness: { scope: [:latitude, :longitude] }
 end

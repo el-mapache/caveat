@@ -38,6 +38,11 @@ GEM
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
+    factory_girl (4.2.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.2.1)
+      factory_girl (~> 4.2.0)
+      railties (>= 3.0.0)
     hike (1.2.3)
     i18n (0.6.4)
     journey (1.0.4)
@@ -89,7 +94,7 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
-    sass (3.2.9)
+    sass (3.2.10)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -115,6 +120,7 @@ PLATFORMS
 
 DEPENDENCIES
   better_errors
+  factory_girl_rails (~> 4.0)
   jquery-rails
   mysql2
   rails (= 3.2.6)

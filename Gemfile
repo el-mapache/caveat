@@ -19,6 +19,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "shoulda-matchers"
   gem "better_errors"
+  gem "factory_girl_rails", "~> 4.0"
 end
 
 gem 'jquery-rails'

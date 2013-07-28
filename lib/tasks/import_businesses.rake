@@ -3,8 +3,6 @@ require 'csv'
 desc "Import SF business data"
 task import_business: :environment do
   CSV.read([Rails.root, "app", "assets", "data", "businesses.csv"].join("/"))[1..-1].each do |row|
-    next if row[6].nil?
-
     b = Business.new
 
     b.id = row[0]
@@ -17,7 +15,7 @@ task import_business: :environment do
     b.longitude = row[7]
     b.phone = row[8]
 
-    b.save!
+    b.save
   end
 
 end
