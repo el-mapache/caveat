@@ -39,6 +39,7 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    geocoder (1.1.8)
     haml (3.1.8)
     haml-rails (0.3.4)
       actionpack (~> 3.0)
@@ -125,6 +126,7 @@ PLATFORMS
 
 DEPENDENCIES
   factory_girl_rails (~> 4.0)
+  geocoder
   haml-rails (= 0.3.4)
   haml_assets (= 0.1.0)
   jquery-rails

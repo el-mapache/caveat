@@ -1,3 +1,4 @@
+
 class Business < ActiveRecord::Base
   attr_accessible :address, :city, :latitude, :longitude, :name, :phone, :state, :zip_code
 
@@ -6,8 +7,20 @@ class Business < ActiveRecord::Base
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: [:latitude, :longitude] }
-  validates :latitude, format: { with: /^\s*[-+]?\d+/,
-    message: "Invalid latitude/longitude format" }
-  validates :longitude, format: { with: /^\s*[-+]?\d+/,
-    message: "Invalid latitude/longitude format" }
+  validates :latitude, format: {
+             with: /^\s*[-+]?\d+/,
+            message: "Invalid latitude/longitude format" 
+  }
+  validates :longitude, format: { 
+            with: /^\s*[-+]?\d+/, 
+            message: "Invalid latitude/longitude format" 
+  }
+
+  geocoded_by :street_address
+  reverse_geocoded_by :latitude, :longitude
+  
+  private
+  def street_address
+    [address, city, state, "US"].compact.join(", ")
+  end
 end
