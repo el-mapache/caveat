@@ -7,7 +7,7 @@ task import_business: :environment do
 
     b.id = row[0]
     b.name = row[1].titleize
-    b.address = row[2].titleize
+    b.address = row[2].titleize unless row[2].nil?
     b.city = row[3]
     b.state = row[4]
     b.zip_code = row[5]

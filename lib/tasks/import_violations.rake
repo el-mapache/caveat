@@ -23,6 +23,7 @@ end
 def parse_date(date_string)
   date_string.split("/").rotate(2).join("/")
 end
+
 task import_violations: :environment do
   CSV.read([Rails.root, "app", "assets", "data", "violations.csv"].join("/"))[1..-1].each do |row|
     b = Business.where(id: row[0])

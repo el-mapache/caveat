@@ -8,6 +8,10 @@ describe Inspection do
     it { should allow_mass_assignment_of(:visit_type) }
     it { should allow_mass_assignment_of(:business_id) }
   end
+  
+  context "validations" do
+    it { should validate_presence_of(:score) }
+  end
 
   context "associations" do
     it { should belong_to(:business) }

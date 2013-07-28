@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130727193324) do
+ActiveRecord::Schema.define(:version => 20130728154533) do
 
   create_table "businesses", :force => true do |t|
     t.string   "name"
@@ -22,8 +22,10 @@ ActiveRecord::Schema.define(:version => 20130727193324) do
     t.string   "latitude"
     t.string   "longitude"
     t.string   "phone"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.integer  "violations_count"
+    t.integer  "inspections_count"
   end
 
   create_table "inspections", :force => true do |t|
@@ -35,6 +37,8 @@ ActiveRecord::Schema.define(:version => 20130727193324) do
     t.datetime "updated_at",  :null => false
   end
 
+  add_index "inspections", ["business_id"], :name => "index_inspections_on_business_id"
+
   create_table "violations", :force => true do |t|
     t.integer  "business_id"
     t.date     "date"
@@ -44,5 +48,7 @@ ActiveRecord::Schema.define(:version => 20130727193324) do
     t.boolean  "pending",      :default => true
     t.date     "corrected_on"
   end
+
+  add_index "violations", ["business_id"], :name => "index_violations_on_business_id"
 
 end
