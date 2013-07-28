@@ -4,6 +4,10 @@ class Business < ActiveRecord::Base
   has_many :violations
   has_many :inspections
 
-  validates :latitude, :longitude, :name, presence: true
+  validates :name, presence: true
   validates :name, uniqueness: { scope: [:latitude, :longitude] }
+  validates :latitude, format: { with: /^\s*[-+]?\d+/,
+    message: "Invalid latitude/longitude format" }
+  validates :longitude, format: { with: /^\s*[-+]?\d+/,
+    message: "Invalid latitude/longitude format" }
 end

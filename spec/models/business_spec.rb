@@ -19,9 +19,12 @@ describe Business do
   end
 
   context "validations" do
-    it { should validate_presence_of(:latitude) }
-    it { should validate_presence_of(:longitude) }
     it { should validate_presence_of(:name) }
+   # describe "lat/lng formatting" do
+   #   it { should allow_value("25.00232440").for(:latitude)}
+   #   it { should_not allow_value("25").for(:latitude) }
+   # end
+
     it "is invalid if latitude, longitude, and name are the same" do
       businessA = FactoryGirl.create(:business)
       expect { FactoryGirl.create(:business ) }.to raise_exception
