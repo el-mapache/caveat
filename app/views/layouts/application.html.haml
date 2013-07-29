@@ -1,10 +1,70 @@
 !!!
-%html
+%html{lang: "en"}
+%meta{name: "viewport",  content: "initial-scale=1.0, user-scalable=no"}
 %head
   %title Caveat
   = stylesheet_link_tag "application", media: "all"
   = javascript_include_tag "application"
   = csrf_meta_tags 
+  :css
+    html { height: 100% }
+    body { height: 100%; margin: 0; padding: 0 }
+    #map-canvas { height: 50% }
+
+  %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}
+  :javascript 
+    function initialize() {
+      var styles = [
+        {
+          "featureType": "water",
+          "stylers": [
+            { "visibility": "simplified" },
+            { "weight": 0.1 },
+            { "lightness": -64 },
+            { "saturation": -66 }
+          ]
+        },
+        {
+          "featureType": "poi",
+          "elementType": "labels.text",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },
+        {
+          "featureType": "road",
+          "stylers": [
+            { "visibility": "on" },
+            { "hue": "#00ff99" },
+            { "gamma": 0.9 },
+            { "saturation": -97 },
+            { "lightness": 2 }
+        ]
+        },
+        {
+          "featureType": "poi.park",
+          "stylers": [
+            { "hue": "#ff4400" },
+            { "saturation": -84 }
+          ]
+        }
+      ];
+      
+      var styledMap = new google.maps.StyledMapType(styles, {name: "Styled Map"});
+      var mapOptions = {
+        center: new google.maps.LatLng(37.7750, -122.4183),
+        zoom: 12,
+        mapTypeControl: false,
+        streetViewControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map = new google.maps.Map(document.getElementById("map-canvas"),
+          mapOptions);
+
+      map.mapTypes.set('map_style', styledMap);
+      map.setMapTypeId('map_style');
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
 %body
 
 = yield 

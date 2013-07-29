@@ -15,6 +15,12 @@ class Business < ActiveRecord::Base
             with: /^\s*[-+]?\d+/, 
             message: "Invalid latitude/longitude format" 
   }
+  
+  class << self
+    def complete(id)
+      includes(:violations, :inspections).find(id)
+    end
+  end
 
   geocoded_by :street_address
   reverse_geocoded_by :latitude, :longitude

@@ -1,5 +1,5 @@
 Caveat::Application.routes.draw do
-  root :to => 'welcome#index'
+  root :to => 'application#index'
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do

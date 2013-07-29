@@ -5,7 +5,7 @@ class API::V1::BusinessesController < ApplicationController
   end
 
   def show
-    @business = Business.includes(:violations, :inspections).find(params[:id])
+    @business = Business.complete(params[:id])
     render json: { 
       business: @business, 
       violations: @business.violations, 
