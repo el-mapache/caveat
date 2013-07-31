@@ -9,10 +9,11 @@
   :css
     html { height: 100% }
     body { height: 100%; margin: 0; padding: 0 }
-    #map-canvas { height: 50% }
+    #map-canvas { height: 75% }
 
   %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}
   :javascript 
+    //$("#map-canvas").modal();
     function initialize() {
       var styles = [
         {
@@ -53,7 +54,7 @@
       var styledMap = new google.maps.StyledMapType(styles, {name: "Styled Map"});
       var mapOptions = {
         center: new google.maps.LatLng(37.7750, -122.4183),
-        zoom: 12,
+        zoom: 15,
         mapTypeControl: false,
         streetViewControl: false,
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -63,6 +64,7 @@
 
       map.mapTypes.set('map_style', styledMap);
       map.setMapTypeId('map_style');
+    window.map = map;
     }
     google.maps.event.addDomListener(window, 'load', initialize);
 %body

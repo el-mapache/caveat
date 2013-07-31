@@ -31,6 +31,13 @@ GEM
     arel (3.0.2)
     bootstrap-sass (2.0.4.2)
     builder (3.0.4)
+    columnize (0.3.6)
+    debugger (1.6.1)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.3)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.3)
     diff-lcs (1.2.4)
     erubis (2.7.0)
     execjs (1.4.0)
@@ -127,6 +134,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass (~> 2.0.4.2)
+  debugger
   factory_girl_rails (~> 4.0)
   geocoder
   haml-rails (= 0.3.4)

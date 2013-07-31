@@ -42,3 +42,4 @@ gem 'bootstrap-sass', '~> 2.0.4.2'
 
 # Deploy with Capistrano
 # gem 'capistrano'
+gem "debugger"

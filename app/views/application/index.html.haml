@@ -1,1 +1,54 @@
+%div
 #map-canvas
+
+%div
+  %button#geocode See places near me
+  %div
+    %form
+      %label
+        Or Search by address
+      %input{placeholder: "eg, 100 Market St, SF, CA"}
+      %button{type: "submit"} Search
+
+:javascript 
+  var coder = document.getElementById("geocode");
+
+  coder.onclick = function() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      
+      $.ajax({
+        type: "GET",
+        url: "http://localhost:3000/api/v1/businesses",
+        data: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        },
+        success: function(res) {
+          console.log(res);
+          for(var i = 0; i < res.length; i++) {
+            var location = new google.maps.LatLng(res[i].business.latitude + 0, res[i].business.longitude + 0);
+            
+
+            var marker = new google.maps.Marker({
+              map: window.map,
+              animation: google.maps.Animation.DROP,
+              position: location 
+            });
+            message(res[i], marker)
+          }
+
+          function message(res, marker) {
+            var message = res.business.name + " - " + res.average_score + " - " + i;
+            var infowindow = new google.maps.InfoWindow({ 
+              content: message,
+              size: new google.maps.Size(50,50)
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(window.map,marker);
+            });
+          }
+        }
+      });
+    });
+  };
