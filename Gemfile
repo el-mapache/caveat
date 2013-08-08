@@ -26,11 +26,11 @@ group :development, :test do
 end
 
 # Front End
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 2.0'
 gem 'haml-rails', '0.3.4'
 gem 'haml_assets', '0.1.0'
 gem 'bootstrap-sass', '~> 2.0.4.2'
-
+gem "twitter-bootstrap-rails"
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

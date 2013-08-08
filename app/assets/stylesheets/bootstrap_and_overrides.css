@@ -1,0 +1,68 @@
+/*
+  =require twitter-bootstrap-static/bootstrap
+
+  Use Font Awesome icons (default)
+  To use Glyphicons sprites instead of Font Awesome, replace with "require twitter-bootstrap-static/sprites"
+  =require twitter-bootstrap-static/fontawesome
+*/
+body {
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+}
+
+.centerer {
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.rats {
+  background-image: url(/assets/small_rats.jpg);
+}
+.yellow {
+  color: #e9d273;
+  /*color: #F7CB45;*/
+}
+
+.modal {
+  border-radius: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border: none;
+}
+
+.modal.fade.in {
+  top: 35%;
+  left: 25%;
+}
+
+.modal-header {
+  border: none;
+}
+
+#myModal {
+  background: transparent;
+}
+
+/* Psuedo element creates a transparent background image */
+#myModal .modal-header:after {
+   content: "";
+   top: 0;
+   left: 0;
+/*   bottom: 0;
+   right: 0;*/
+   position: absolute;
+   z-index: -1; 
+   opacity: 0.35;
+   background: url(/assets/giants_rats.jpg) 10% 10% no-repeat;
+}
+
+.spin-wrapper {
+  position: relative;
+  display: block;
+}
+
+.spin-wrapper img {
+  position: absolute;
+  top: 30%;
+  left: 35%;

@@ -7,15 +7,62 @@
   = javascript_include_tag "application"
   = csrf_meta_tags 
   :css
-    html { height: 100% }
-    body { height: 100%; margin: 0; padding: 0 }
-    #map-canvas { height: 75% }
+    body, html {
+      height: 100%;
+    }
+    
+    .sepia-blur {
+      -webkit-filter: grayscale(100%) sepia(35%) contrast(110%) brightness(80%) blur(1px); 
+    }
+
+    .sepia-gray {
+      -webkit-filter: grayscale(100%) sepia(45%) contrast(120%) brightness(75%); 
+    }
+    #map-canvas { 
+      height: 100%; 
+    }
+    img[src*="iws3.png"] {
+      display: none;
+    }
 
   %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}
-  :javascript 
-    //$("#map-canvas").modal();
+  :javascript
+    var map;
     function initialize() {
       var styles = [
+        {
+          "stylers": [
+            { "gamma": 0.77 },
+            { "lightness": -12 },
+            { "saturation": -100 }
+          ]
+        },{
+          "elementType": "labels.icon",
+          "stylers": [
+            { "visibility": "off" }
+          ]
+        },{
+          "featureType": "road.highway",
+          "stylers": [
+            { "invert_lightness": true },
+            { "weight": 2 }
+          ]
+        },{
+          "featureType": "road.local",
+          "stylers": [
+            { "weight": 0.5 },
+            { "invert_lightness": false },
+            { "gamma": 1.13 }
+          ]
+        },
+        {
+          "featureType": "road.local",
+          "elementType": "labels.text",
+          "stylers": [
+            { "color": "#000000" },
+            { "weight": 0.4 }
+          ]
+        },
         {
           "featureType": "water",
           "stylers": [
@@ -33,16 +80,6 @@
           ]
         },
         {
-          "featureType": "road",
-          "stylers": [
-            { "visibility": "on" },
-            { "hue": "#00ff99" },
-            { "gamma": 0.9 },
-            { "saturation": -97 },
-            { "lightness": 2 }
-        ]
-        },
-        {
           "featureType": "poi.park",
           "stylers": [
             { "hue": "#ff4400" },
@@ -52,19 +89,33 @@
       ];
       
       var styledMap = new google.maps.StyledMapType(styles, {name: "Styled Map"});
+      var latlng = new google.maps.LatLng(37.7750, -122.4183);
+
       var mapOptions = {
-        center: new google.maps.LatLng(37.7750, -122.4183),
-        zoom: 15,
+        center: latlng,
         mapTypeControl: false,
+        zoom: 14,
         streetViewControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        rotateControl: false,
+        panControl: false,
+        mapTypeId: "road"//google.maps.MapTypeId.SATELLITE
       };
-      var map = new google.maps.Map(document.getElementById("map-canvas"),
+      map = new google.maps.Map(document.getElementById("map-canvas"),
           mapOptions);
 
       map.mapTypes.set('map_style', styledMap);
       map.setMapTypeId('map_style');
-    window.map = map;
+      window.map = map;
+
+        /*var imageBounds = new google.maps.LatLngBounds(
+
+          new google.maps.LatLng(37.7592, -122.4732),
+          new google.maps.LatLng(37.7875,-122.3641)
+        );
+        var overlay = new google.maps.GroundOverlay(
+          "#{asset_path('small_rats.jpg')}",
+           imageBounds, {opacity: 0.4});
+        overlay.setMap(map);*/
     }
     google.maps.event.addDomListener(window, 'load', initialize);
 %body

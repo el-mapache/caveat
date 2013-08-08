@@ -1,7 +1,22 @@
-%div
-#map-canvas
 
-%div
+%div{style: "margin-left: 30px;background: #d75044;position: absolute;top: 30px;left: 0;z-index: 1000000000000000;padding:20px;width: auto;height: 89px;"}
+  %div{style: "float: left;font-family: molotregular;"}
+    %span{style: "font-size: 86px;color: #E2EBD6;margin-right:0px"}RAT
+    %span{style: "color: #E2EBD6;margin-left: -15px;font-size: 29px;"}
+      INGS
+  %div{style:" position: relative;float: left;top:-1px;left:-2px"}
+    = image_tag("badge.svg", width: "60px", height: "60px")
+    = image_tag("cute_rat.svg", height: "50px", style: "position: absolute;top:0;left:0;")
+.modal.fade.span7#myModal{data: {backdrop: "static", keyboard: false}}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h2{ class: "modal-title yellow", style: "text-align: center; font-family: rokkittregular"} Over 62% of San Francisco restaurants have food safety violations..
+      .modal-body.span6{style: "font-family: Georgia; text-align: center;"}
+        %button.centerer{type: "button", id: "locate", class: "span2 offset1 btn btn-large", style: "text-align: center"} How dirty are the places near you?
+#map-canvas.sepia-blur
+
+-#%div
   %button#geocode See places near me
   %div
     %form
@@ -11,11 +26,38 @@
       %button{type: "submit"} Search
 
 :javascript 
-  var coder = document.getElementById("geocode");
-
+  var coder = document.getElementById("locate");
+  $(document).ready(function() {
+    $("#myModal").modal('toggle');
+  });
   coder.onclick = function() {
+    var opts = {
+      lines: 13, // The number of lines to draw
+      length: 10, // The length of each line
+      width: 5, // The line thickness
+      radius: 15, // The radius of the inner circle
+      corners: 1, // Corner roundness (0..1)
+      rotate: 0, // The rotation offset
+      direction: 1, // 1: clockwise, -1: counterclockwise
+      color: '#000', // #rgb or #rrggbb
+      speed: 1, // Rounds per second
+      trail: 60, // Afterglow percentage
+      shadow: false, // Whether to render a shadow
+      hwaccel: false, // Whether to use hardware acceleration
+      className: 'spinner', // The CSS class to assign to the spinner
+      zIndex: 2e9, // The z-index (defaults to 2000000000)
+      top: 'auto', // Top position relative to parent in px
+      left: 'auto' // Left position relative to parent in px
+    };
+
+    coder.disabled = true;
+    coder.className = coder.className + " disabled";
+    var spinner = new Spinner(opts).spin(coder);
+
     navigator.geolocation.getCurrentPosition(function(position) {
-      
+      var lat = position.coords.latitude,
+          lng = position.coords.longitude;
+
       $.ajax({
         type: "GET",
         url: "http://localhost:3000/api/v1/businesses",
@@ -24,19 +66,25 @@
           lng: position.coords.longitude
         },
         success: function(res) {
-          console.log(res);
+          $("#map-canvas").removeClass('sepia-blur').addClass("sepia-gray");
+          $("#myModal").modal("hide");
+          window.map.panTo(new google.maps.LatLng(lat,lng));
+          window.map.setZoom(17);
           for(var i = 0; i < res.length; i++) {
+            // create a ltnlng object with the businesses position
             var location = new google.maps.LatLng(res[i].business.latitude + 0, res[i].business.longitude + 0);
-            
-
+            // create a marker object for the business
             var marker = new google.maps.Marker({
               map: window.map,
+              draggable: false,
               animation: google.maps.Animation.DROP,
+              icon: "#{asset_path('black_marker.svg')}",
               position: location 
             });
             message(res[i], marker)
           }
-
+          
+          // add a google maps info window
           function message(res, marker) {
             var message = res.business.name + " - " + res.average_score + " - " + i;
             var infowindow = new google.maps.InfoWindow({ 
