@@ -1,5 +1,7 @@
-var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService']);
-
+var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService', 'map']);
+console.log(app);
+// This controller simply provides a wrapper for the bootstrap dialog
+// directive.
 app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
   $scope.opts = {
     backdrop: true,
@@ -14,7 +16,7 @@ app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
   $dialog.dialog($scope.opts).open();
 });
 
-// the dialog is injected in the specified controller
+// dialog directive is injected into this controller
 app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationService) {
   // Aliased so I dont have to type so damn much
   var geo = geolocationService;
@@ -59,7 +61,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
     $http({
       method: "GET",
       url: "http://localhost:3000/api/v1/businesses",
-      data: {
+      params: {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       }
@@ -69,8 +71,9 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
     }).error(function(data, status) {
       $scope.error = {
         hasError: true,
-        message: "Something went horribly wrong."
+        message: "Something has gone horribly wrong."
       };
     });
   };
 });
+

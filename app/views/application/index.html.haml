@@ -2,12 +2,12 @@
   .pull-left.molot
     %span.reset.hero-title RAT
     %h2.inliner INGS
-  #raticon{style:" position: relative;float: left;top:-1px;left:-2px"}
-    = image_tag("badge.svg", width: "60px", height: "60px")
-    = image_tag("cute_rat.svg", height: "50px", class: "rat-svg")
+  #raticon.pull-left
+    = image_tag("badge.svg", width: 60, height: 60)
+    = image_tag("cute_rat.svg", height: 60, width: 60, class: "rat-svg")
 
-#myModal{"ng-controller" => "DialogCtrl"}
-  
+#myModal{data: {"ng-controller" => "DialogCtrl"}}
+%google-map{"ng-transclude"=>"", style: "height: 100%;width:100%"}
 #map-canvas.sepia-blur
 
 -#%div
@@ -222,7 +222,6 @@
         },
         success: function(res) {
           $("#map-canvas").removeClass('sepia-blur').addClass("sepia-gray");
-          $("#myModal").modal("hide");
           window.map.panTo(new google.maps.LatLng(lat,lng));
           window.map.setZoom(17);
           for(var i = 0; i < res.length; i++) {

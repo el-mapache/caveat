@@ -6,5 +6,6 @@
 //= require angular-ui-bootstrap
 //= require templates
 //= require geolocation_service
+//= require google_map_directive
 //= require modal
 

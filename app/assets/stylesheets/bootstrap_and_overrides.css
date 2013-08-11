@@ -145,14 +145,11 @@ img[src*="iws3.png"] {
 
 #raticon {
   position: relative;
-  float: left;
-  top: -1px;
-  left: -2px
 }
 
 #raticon .rat-svg {
   position: absolute;
-  top: 0;
+  top: 0px;
   left: 0
 
 }
