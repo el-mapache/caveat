@@ -26,6 +26,8 @@ group :development, :test do
 end
 
 # Front End
+gem 'angularjs-rails'
+gem 'angular-ui-bootstrap-rails'
 gem 'jquery-rails', '~> 2.0'
 gem 'haml-rails', '0.3.4'
 gem 'haml_assets', '0.1.0'

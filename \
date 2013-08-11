@@ -1,0 +1,56 @@
+var app = angular.module("ratings",['ui.bootstrap', 'templates']);
+
+app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
+  $scope.opts = {
+    backdrop: true,
+    keyboard: false,
+    backdropClick: false,
+    template: $templateCache.get("modal.html"),
+    dialogClass: "modal span7",
+    backdropFade: true,
+    controller: "ContentCtrl"
+  };
+  
+  $dialog.dialog($scope.opts).open();
+});
+
+// the dialog is injected in the specified controller
+app.controller("ContentCtrl", function($scope, $http, dialog, geolocationService) {
+  $scope.locate = function($event) {
+    $scope._showSpinner
+    $scope._getBusinesses(function() {
+      dialog.close();
+    });
+  };
+
+  $scope_showSpinner = function() {
+    var btn = $event.currentTarget,
+        spinner;
+
+    btn.disabled = true;
+    btn.className = btn.className + " disabled";
+    spinner = new Spinner({
+      lines: 13,
+      length: 10,
+      width: 5,
+      radius: 15,
+    }).spin(btn);
+  };
+
+  $scope._getBusinesses = function(callback) {
+    $http({
+      method: "GET",
+      url: "http://localhost:3000/api/v1/businesses",
+      data: {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+    }).success(function(data, status, headers, config) {
+      console.log(arguments);
+    }).error(function(data, status) {
+      console.log(data); 
+      console.log(status);
+    });
+  };
+});
+console.log(app);

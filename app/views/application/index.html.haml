@@ -1,19 +1,13 @@
-
-%div{style: "margin-left: 30px;background: #d75044;position: absolute;top: 30px;left: 0;z-index: 1000000000000000;padding:20px;width: auto;height: 89px;"}
-  %div{style: "float: left;font-family: molotregular;"}
-    %span{style: "font-size: 86px;color: #E2EBD6;margin-right:0px"}RAT
-    %span{style: "color: #E2EBD6;margin-left: -15px;font-size: 29px;"}
-      INGS
-  %div{style:" position: relative;float: left;top:-1px;left:-2px"}
+#title-badge
+  .pull-left.molot
+    %span.reset.hero-title RAT
+    %h2.inliner INGS
+  #raticon{style:" position: relative;float: left;top:-1px;left:-2px"}
     = image_tag("badge.svg", width: "60px", height: "60px")
-    = image_tag("cute_rat.svg", height: "50px", style: "position: absolute;top:0;left:0;")
-.modal.fade.span7#myModal{data: {backdrop: "static", keyboard: false}}
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %h2{ class: "modal-title yellow", style: "text-align: center; font-family: rokkittregular"} Over 62% of San Francisco restaurants have food safety violations..
-      .modal-body.span6{style: "font-family: Georgia; text-align: center;"}
-        %button.centerer{type: "button", id: "locate", class: "span2 offset1 btn btn-large", style: "text-align: center"} How dirty are the places near you?
+    = image_tag("cute_rat.svg", height: "50px", class: "rat-svg")
+
+#myModal{"ng-controller" => "DialogCtrl"}
+  
 #map-canvas.sepia-blur
 
 -#%div
@@ -26,34 +20,195 @@
       %button{type: "submit"} Search
 
 :javascript 
-  var coder = document.getElementById("locate");
-  $(document).ready(function() {
-    $("#myModal").modal('toggle');
-  });
-  coder.onclick = function() {
-    var opts = {
-      lines: 13, // The number of lines to draw
-      length: 10, // The length of each line
-      width: 5, // The line thickness
-      radius: 15, // The radius of the inner circle
-      corners: 1, // Corner roundness (0..1)
-      rotate: 0, // The rotation offset
-      direction: 1, // 1: clockwise, -1: counterclockwise
-      color: '#000', // #rgb or #rrggbb
-      speed: 1, // Rounds per second
-      trail: 60, // Afterglow percentage
-      shadow: false, // Whether to render a shadow
-      hwaccel: false, // Whether to use hardware acceleration
-      className: 'spinner', // The CSS class to assign to the spinner
-      zIndex: 2e9, // The z-index (defaults to 2000000000)
-      top: 'auto', // Top position relative to parent in px
-      left: 'auto' // Left position relative to parent in px
+    function Pin(opts) {
+      google.maps.Marker.apply(this, arguments);
+      this.active = false;
+      this.infoWindow = null;
+    }
+    Pin.prototype = new google.maps.Marker();
+
+    /* An InfoBox is like an info window, but it displays
+     * under the marker, opens quicker, and has flexible styling.
+     * @param {GLatLng} latlng Point to place bar at
+     * @param {Map} map The map on which to display this InfoBox.
+     * @param {Object} opts Passes configuration options - content,
+     *   offsetVertical, offsetHorizontal, className, height, width
+     */
+    function InfoBox(opts) {
+      google.maps.OverlayView.call(this);
+      this._latlng = opts.latlng;
+      this._map = opts.map;
+      this._offsetVertical = -115;
+      this._offsetHorizontal = -50;
+      this._height = 50;
+      this._width = 200;
+      this._content = opts.content;
+      var me = this;
+
+      this._onBoundsChange = google.maps.event.addListener(this._map, "bounds_changed", function() {
+        return me.panMap.apply(me);
+      });
+      // Once the properties of this OverlayView are initialized, set its map so
+      // that we can display it.  This will trigger calls to panes_changed and
+      // draw.
+      this.setMap(this._map);
+    }
+
+    InfoBox.prototype = new google.maps.OverlayView();
+
+    /* Creates the DIV representing this InfoBox
+     */
+    InfoBox.prototype.remove = function() {
+      if (this._div) {
+        this._div.parentNode.removeChild(this._div);
+        this._div = null;
+      }
     };
 
-    coder.disabled = true;
-    coder.className = coder.className + " disabled";
-    var spinner = new Spinner(opts).spin(coder);
+    /* Redraw the Bar based on the current projection and zoom level
+     */
+    InfoBox.prototype.draw = function() {
+      var div;
+      // Creates the element if it doesn't exist already.
+      this.createElement();
+      if (!this._div) return;
 
+      // Calculate the DIV coordinates of two opposite corners of our bounds to
+      // get the size and position of our Bar
+      var pixPosition = this.getProjection().fromLatLngToDivPixel(this._latlng);
+      if (!pixPosition) return;
+
+      // Now position our DIV based on the DIV coordinates of our bounds
+      div = this._div;
+      div.style.width = this._width + "px";
+      div.style.left = (pixPosition.x + this._offsetHorizontal) + "px";
+      div.style.height = this._height + "px";
+      div.style.top = (pixPosition.y + this._offsetVertical) + "px";
+      div.style.display = 'block';
+    };
+
+    /* Creates the DIV representing this InfoBox in the floatPane.  If the panes
+     * object, retrieved by calling getPanes, is null, remove the element from the
+     * DOM.  If the div exists, but its parent is not the floatPane, move the div
+     * to the new pane.
+     * Called from within draw.  Alternatively, this can be called specifically on
+     * a panes_changed event.
+     */
+    InfoBox.prototype.createElement = function() {
+      var panes = this.getPanes(),
+          div = this._div;
+
+      if (!div) {
+        // This does not handle changing panes.  You can set the map to be null and
+        // then reset the map to move the div.
+        div = this._div = document.createElement("div");
+        div.className = "info-window";
+        var contentDiv = document.createElement("div");
+        contentDiv.innerHTML = this._content;
+        var topDiv = document.createElement("div");
+        topDiv.style.textAlign = "right";
+        var closeImg = document.createElement("img");
+        closeImg.style.width = "32px";
+        closeImg.style.height = "32px";
+        closeImg.style.cursor = "pointer";
+        closeImg.src = "http://gmaps-samples.googlecode.com/svn/trunk/images/closebigger.gif";
+        topDiv.appendChild(closeImg);
+        var arrow = document.createElement("div");
+        arrow.className = "arrow-down";
+        function removeInfoBox(ib) {
+          return function() {
+            ib.setMap(null);
+          };
+        }
+
+        google.maps.event.addDomListener(closeImg, 'click', removeInfoBox(this));
+
+        div.appendChild(topDiv);
+        div.appendChild(contentDiv);
+        div.appendChild(arrow);
+        panes.floatPane.appendChild(div);
+        this.panMap();
+      } else if (div.parentNode != panes.floatPane) {
+        // The panes have changed.  Move the div.
+        div.parentNode.removeChild(div);
+        panes.floatPane.appendChild(div);
+      } else {
+        // The panes have not changed, so no need to create or move the div.
+      }
+    }
+
+    /* Pan the map to fit the InfoBox.
+     */
+    InfoBox.prototype.panMap = function() {
+      // if we go beyond map, pan map
+      var map = this._map,
+          bounds = map.getBounds();
+      if (!bounds) return;
+
+      // The position of the infowindow
+      var position = this._latlng;
+
+      // The dimension of the infowindow
+      var iwWidth = this._width;
+      var iwHeight = this._height;
+
+      // The offset position of the infowindow
+      var iwOffsetX = this._offsetHorizontal;
+      var iwOffsetY = this._offsetVertical;
+
+      // Padding on the infowindow
+      var padX = 40;
+      var padY = 40;
+
+      // The degrees per pixel
+      var mapDiv = map.getDiv();
+      var mapWidth = mapDiv.offsetWidth;
+      var mapHeight = mapDiv.offsetHeight;
+      var boundsSpan = bounds.toSpan();
+      var longSpan = boundsSpan.lng();
+      var latSpan = boundsSpan.lat();
+      var degPixelX = longSpan / mapWidth;
+      var degPixelY = latSpan / mapHeight;
+
+      // The bounds of the map
+      var mapWestLng = bounds.getSouthWest().lng();
+      var mapEastLng = bounds.getNorthEast().lng();
+      var mapNorthLat = bounds.getNorthEast().lat();
+      var mapSouthLat = bounds.getSouthWest().lat();
+
+      // The bounds of the infowindow
+      var iwWestLng = position.lng() + (iwOffsetX - padX) * degPixelX;
+      var iwEastLng = position.lng() + (iwOffsetX + iwWidth + padX) * degPixelX;
+      var iwNorthLat = position.lat() - (iwOffsetY - padY) * degPixelY;
+      var iwSouthLat = position.lat() - (iwOffsetY + iwHeight + padY) * degPixelY;
+
+      // calculate center shift
+      var shiftLng =
+          (iwWestLng < mapWestLng ? mapWestLng - iwWestLng : 0) +
+          (iwEastLng > mapEastLng ? mapEastLng - iwEastLng : 0);
+      var shiftLat =
+          (iwNorthLat > mapNorthLat ? mapNorthLat - iwNorthLat : 0) +
+          (iwSouthLat < mapSouthLat ? mapSouthLat - iwSouthLat : 0);
+
+      // The center of the map
+      var center = map.getCenter();
+
+      // The new map center
+      var centerX = center.lng() - shiftLng;
+      var centerY = center.lat() - shiftLat;
+
+      // center the map to the new shifted center
+      map.setCenter(new google.maps.LatLng(centerY, centerX));
+
+      // Remove the listener after panning is complete.
+      google.maps.event.removeListener(this._onBoundsChange);
+      this.onBoundsChange = null;
+    };
+
+
+  var coder = document.querySelector("#map-canvas");
+
+  coder.onclick = function() {
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat = position.coords.latitude,
           lng = position.coords.longitude;
@@ -74,7 +229,7 @@
             // create a ltnlng object with the businesses position
             var location = new google.maps.LatLng(res[i].business.latitude + 0, res[i].business.longitude + 0);
             // create a marker object for the business
-            var marker = new google.maps.Marker({
+            var marker = new Pin({
               map: window.map,
               draggable: false,
               animation: google.maps.Animation.DROP,
@@ -87,13 +242,16 @@
           // add a google maps info window
           function message(res, marker) {
             var message = res.business.name + " - " + res.average_score + " - " + i;
-            var infowindow = new google.maps.InfoWindow({ 
-              content: message,
-              size: new google.maps.Size(50,50)
-            });
-
-            google.maps.event.addListener(marker, 'click', function() {
-              infowindow.open(window.map,marker);
+            google.maps.event.addDomListener(marker, "click", function(e) {
+              if (marker.active) { 
+                marker.infoWindow.remove();
+                marker.active = false;
+                marker.infoWindow = null;
+              } else {
+                var infoBox = new InfoBox({latlng: marker.getPosition(), map: map, content: message});
+                marker.infoWindow = infoBox;
+                marker.active = true;
+              }
             });
           }
         }

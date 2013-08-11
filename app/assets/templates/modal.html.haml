@@ -1,0 +1,7 @@
+.modal-content#myModal
+  .modal-header
+    %h2{ class: "modal-title yellow", style: "text-align: center; font-family: rokkittregular"} Over 62% of San Francisco restaurants have food safety violations..
+  .modal-body.span6{style: "font-family: Georgia; text-align: center;"}
+    %p{class: "alert alert-error", data: {"ng-show" => "error.hasError"}}
+      {{error.message}}
+    %button#locate.centerer{data: {"ng-click" => "locate()", "ng-disabled" => "!active"}, type: "button", class: "span2 offset1 btn btn-large"} How dirty are the places near you?

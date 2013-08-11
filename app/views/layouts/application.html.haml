@@ -1,30 +1,11 @@
 !!!
-%html{lang: "en"}
+%html{lang: "en", "ng-app" => "ratings"}
 %meta{name: "viewport",  content: "initial-scale=1.0, user-scalable=no"}
 %head
   %title Caveat
   = stylesheet_link_tag "application", media: "all"
   = javascript_include_tag "application"
   = csrf_meta_tags 
-  :css
-    body, html {
-      height: 100%;
-    }
-    
-    .sepia-blur {
-      -webkit-filter: grayscale(100%) sepia(35%) contrast(110%) brightness(80%) blur(1px); 
-    }
-
-    .sepia-gray {
-      -webkit-filter: grayscale(100%) sepia(45%) contrast(120%) brightness(75%); 
-    }
-    #map-canvas { 
-      height: 100%; 
-    }
-    img[src*="iws3.png"] {
-      display: none;
-    }
-
   %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}
   :javascript
     var map;
@@ -98,6 +79,7 @@
         streetViewControl: false,
         rotateControl: false,
         panControl: false,
+        zoomControl: false,
         mapTypeId: "road"//google.maps.MapTypeId.SATELLITE
       };
       map = new google.maps.Map(document.getElementById("map-canvas"),
@@ -106,19 +88,7 @@
       map.mapTypes.set('map_style', styledMap);
       map.setMapTypeId('map_style');
       window.map = map;
-
-        /*var imageBounds = new google.maps.LatLngBounds(
-
-          new google.maps.LatLng(37.7592, -122.4732),
-          new google.maps.LatLng(37.7875,-122.3641)
-        );
-        var overlay = new google.maps.GroundOverlay(
-          "#{asset_path('small_rats.jpg')}",
-           imageBounds, {opacity: 0.4});
-        overlay.setMap(map);*/
     }
     google.maps.event.addDomListener(window, 'load', initialize);
 %body
-
-= yield 
-
+  = yield 
