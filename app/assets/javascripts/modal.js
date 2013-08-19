@@ -1,5 +1,4 @@
-var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService', 'map']);
-console.log(app);
+var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService','broadcastService','google-map']);
 // This controller simply provides a wrapper for the bootstrap dialog
 // directive.
 app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
@@ -17,10 +16,11 @@ app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
 });
 
 // dialog directive is injected into this controller
-app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationService) {
+app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationService, broadcastService) {
   // Aliased so I dont have to type so damn much
-  var geo = geolocationService;
-  
+  var geo = geolocationService,
+      speaker = broadcastService;
+
   $scope.active = geo.isSupported() ? true : false;
   $scope.error = {
     hasError: false,
@@ -41,6 +41,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
         if (response.toString().match(/Error/)) {
           $scope.error.hasError = true;
           $scope.error.message = response.message + ".";
+          $scope.toggleActive();
         } else {
           $scope._getBusinesses(response);
         }
@@ -54,7 +55,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
       length: 10,
       width: 5,
       radius: 15,
-    }).spin(angular.element("#locate")[0]);
+    }).spin(document.getElementById("locate"));
   };
   
   $scope._getBusinesses = function(position) {
@@ -66,8 +67,8 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
         lng: position.coords.longitude
       }
     }).success(function(data, status, headers, config) {
-      console.log(arguments);
       dialog.close();
+      speaker.broadcast("closeModal", data);
     }).error(function(data, status) {
       $scope.error = {
         hasError: true,
@@ -77,3 +78,34 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
   };
 });
 
+app.controller("BusinessCtrl", function($scope, broadcastService) {
+  $scope.showBusiness = false;
+
+  $scope.toggleBusinessWindow = function() {
+    return $scope.showBusiness = !$scope.showBusiness;
+  };
+  
+  $scope.ratScore = function() {
+    var times = $scope.average >= 90 ? 0 :
+                $scope.average >= 79 && $scope.average <= 89 ? 1 :
+                $scope.average < 79 && $scope.average >= 69 ? 2 :
+                $scope.average < 69 && $scope.average >= 59 ? 3 :
+                4;
+
+    return new Array(times);
+  };
+  
+  $scope.$on("HideBusiness", function(evt) {
+    $scope.toggleBusinessWindow();
+    $scope.$apply();
+  });
+
+  $scope.$on("ShowBusiness", function(evt, businessObj) {
+    $scope.businessObj = businessObj;
+    $scope.average = $scope.businessObj.average_score;
+
+    if (!$scope.showBusiness) $scope.toggleBusinessWindow();
+    
+    $scope.$apply();
+  });  
+});

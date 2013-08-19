@@ -5,9 +5,13 @@ angular.module("geolocationService", []).service("geolocationService", function(
     isSupported: function() {
       return supported;
     },
-
+    
+    currentPostion: null,
+      
     getPosition: function(callback) {
+      var self = this;
       navigator.geolocation.getCurrentPosition(function(position) {
+        self.currentPosition = position.coords;
         callback(position);
       }, function(error) {
           callback(error);

@@ -1,0 +1,121 @@
+angular.module("google-map", ['broadcastService', 'geolocationService','Pin']).directive("googleMap", function($http,broadcastService,geolocationService, Pin) {
+  var _defaults = {
+    zoom: 14,
+    center: new google.maps.LatLng(37.7750, -122.4183),
+    mapTypeId: 'road'
+  };
+
+  /* Asynchronously load JSON
+   * @param {configs} String name of a JSON file
+   * @return promise
+  */
+  function loadStyles(configs) {
+    return $http({
+      method: "GET",
+      url: "<%= asset_path('" + configs + "') %>"
+    });
+  }
+
+  function drawMap(element, options, styled) {
+    var map = new google.maps.Map(element, options);
+
+    if (typeof styled !== "undefined") {
+      map.mapTypes.set('map_style', styled);
+      map.setMapTypeId('map_style');
+    }
+
+    return map;
+  }
+
+  return {
+    priority: 100,
+    restrict: 'EA',
+    template: "<div class='angular-google-map' ng-transclude></div>",
+    replace: false,
+    transclude: true,
+    scope: true,
+    controller: function($scope, broadcastService) {
+      $scope.currentMarker = null;
+      $scope.businesses = null;
+      $scope.markers = [];
+
+      $scope.$on('closeModal', function(evt, data) {
+        $scope.move(17);
+        $scope.businesses = data;
+
+        angular.forEach(data, function(businessObj, index) {
+          var business = businessObj.business,
+              message = business.name + " - " + businessObj.average_score; 
+
+          $scope.addMarker(business.latitude, business.longitude, message, index);
+        });
+      });
+
+      $scope.refresh = function() {
+        google.maps.event.trigger($scope.map, "resize");
+      };
+      
+      /* Moves to the position returned by the location, service
+       * @param {zoom} Integer Zoom the map to the desired level
+      */
+      $scope.move = function(zoom) {
+        var lat = geolocationService.currentPosition.latitude,
+            lng = geolocationService.currentPosition.longitude
+
+        $scope.map.panTo(new google.maps.LatLng(lat, lng));
+        if (!angular.isUndefined(zoom))
+          $scope.map.setZoom(zoom);
+      };
+
+      $scope.addMarker = function(lat, lng, message, index) {
+        var location = new google.maps.LatLng(lat, lng);
+        var marker = new Pin({
+          map: $scope.map,
+          draggable: false,
+          animation: google.maps.Animation.DROP,
+          icon: "<%= asset_path('black_marker.svg') %>",
+          position: location
+        }, message, index);
+        google.maps.event.addDomListener(marker, 'click', $scope.setCurrentWindow);
+        $scope.markers.push(marker);
+      };
+
+      $scope.setCurrentWindow = function() {
+        if ($scope.currentMarker) $scope.currentMarker.toggleInfoWindow();
+        if ($scope.currentMarker === this) {
+          $scope.currentMarker = null;
+          broadcastService.broadcast("HideBusiness");
+          return false;
+        }
+
+        this.toggleInfoWindow()
+        broadcastService.broadcast("ShowBusiness", $scope.businesses[this.index]);
+
+        $scope.currentMarker = this;
+      };
+    },
+    link: function(scope, element, attrs, controller) {
+      var styledMap = null, options = null;
+
+      if (attrs.stylers) {
+        loadStyles(attrs.stylers).success(function(data, status) {
+          styledMap = new google.maps.StyledMapType(data.stylers, {name: "Styled Map"});
+        });
+      }
+
+      if (attrs.options) 
+        options = angular.extend({}, _defaults, angular.fromJson(attrs.options));
+      else
+        options = _defaults;
+
+      google.maps.event.addDomListener(window, 'load', function() {
+        scope.map = drawMap(element[0],options, styledMap);
+      });
+
+      scope.$on("closeModal", function() {
+        element.removeClass("sepia-blur").addClass("sepia-gray");
+      });
+
+    }
+  };
+});
