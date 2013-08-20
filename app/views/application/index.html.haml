@@ -14,12 +14,37 @@
   %div
     %p
       {{ businessObj.average_score }}
-
   %img{class: "pull-left", src: "#{asset_path('cute_rat.svg')}", data: {"ng-repeat" => "t in ratScore()"}}
   %h2
     {{ businessObj.business.name}}
   %h4
     {{ businessObj.business.address}}
+
+  %table.table
+    %thead
+      %tr
+        %th Date
+        %th Type
+        %th Score
+  %div{"ng-repeat" => "i in businessObj.by_year"}
+    %table.table.table-hover.table-first
+      %tbody
+        %tr{"ng-click" => "showViolations = !showViolations"}
+          %td {{ i.inspection.date }}
+          %td {{ i.inspection.visit_type }}
+          %td {{ i.inspection.score }}
+    %table.table{style: "display: none", "ng-show" => "showViolations", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}
+      %thead
+        %tr
+          %th Description
+          %th Pending?
+          %th Addressed On
+        %tbody
+          %tr{"ng-repeat" => "v in i.violations"}
+            %td {{ v.description }}
+            %td {{ v.pending }}
+            %td {{ v.corrected_on }}
+        
 -#%div
   %button#geocode See places near me
   %div

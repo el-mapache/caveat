@@ -80,11 +80,16 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
 
 app.controller("BusinessCtrl", function($scope, broadcastService) {
   $scope.showBusiness = false;
+  $scope.showViolations = false;
 
   $scope.toggleBusinessWindow = function() {
     return $scope.showBusiness = !$scope.showBusiness;
   };
   
+  $scope.businessShown = function() {
+    return $scope.showBusiness ? "fade-show" : "fade-hide";
+  }
+
   $scope.ratScore = function() {
     var times = $scope.average >= 90 ? 0 :
                 $scope.average >= 79 && $scope.average <= 89 ? 1 :
@@ -108,4 +113,8 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
     
     $scope.$apply();
   });  
+});
+
+app.controller("AccordionCtrl", function($scope) {
+
 });
