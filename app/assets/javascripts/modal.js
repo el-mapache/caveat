@@ -86,20 +86,6 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
     return $scope.showBusiness = !$scope.showBusiness;
   };
   
-  $scope.businessShown = function() {
-    return $scope.showBusiness ? "fade-show" : "fade-hide";
-  }
-
-  $scope.ratScore = function() {
-    var times = $scope.average >= 90 ? 0 :
-                $scope.average >= 79 && $scope.average <= 89 ? 1 :
-                $scope.average < 79 && $scope.average >= 69 ? 2 :
-                $scope.average < 69 && $scope.average >= 59 ? 3 :
-                4;
-
-    return new Array(times);
-  };
-  
   $scope.$on("HideBusiness", function(evt) {
     $scope.toggleBusinessWindow();
     $scope.$apply();
@@ -113,8 +99,4 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
     
     $scope.$apply();
   });  
-});
-
-app.controller("AccordionCtrl", function($scope) {
-
 });

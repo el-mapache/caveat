@@ -1,9 +1,10 @@
-angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
-  function Pin(opts, message, index) {
+angular.module("Pin",['InfoWindow']).factory("Pin", function($compile, InfoWindow) {
+  function Pin(opts, message, index, template) {
     google.maps.Marker.apply(this, arguments);
     this.active = false;
     this.infoWindow = null;
     this.message = message || "";
+    this.template = template || null;
     this.index = index;
   }
   
@@ -15,7 +16,7 @@ angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
       this.active = false;
       this.infoWindow = null;
     } else {
-      var infoWindow = new InfoWindow({latlng: this.getPosition(), map: this.map, content: this.message});
+      var infoWindow = new InfoWindow({latlng: this.getPosition(), map: this.map, content: this.message, template: this.template});
       this.infoWindow = infoWindow;
       this.active = true;
     }
@@ -27,5 +28,6 @@ angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
     this.infoWindow.remove();
     this.infoWindow = null;
   };
+  
   return Pin;
 });

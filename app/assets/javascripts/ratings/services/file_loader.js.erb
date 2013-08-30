@@ -1,0 +1,14 @@
+/* Service to asynchronously load files
+ * @param {file} String name of a file
+ * @return promise
+*/
+angular.module("fileLoader", []).service("fileLoader", ["$http", function($http) {
+  return {
+    load: function(file) {
+      return $http({
+        method: "GET",
+        url: "<%= asset_path('" + file + "') %>"
+      });
+    }
+  };
+}]);

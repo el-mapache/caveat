@@ -6,7 +6,6 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
    *   offsetVertical, offsetHorizontal, className, height, width
    */
   function InfoBox(opts) {
-    console.log(opts)
     google.maps.OverlayView.call(this);
     this._latlng = opts.latlng;
     this._map = opts.map;
@@ -72,32 +71,36 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
   InfoBox.prototype.createElement = function() {
     var panes = this.getPanes(),
         div = this._div;
+
     if (!div) {
       // This does not handle changing panes.  You can set the map to be null and
       // then reset the map to move the div.
-      
-    //  div = this._div = document.createElement("div");
-    //  div.className = "info-window-wrapper";
-    //  var innerDiv = document.createElement("div");
-    //  innerDiv.className = "info-window";
-    //  innerDiv.style.height = this._height;
-    //  innerDiv.style.width = this._width;
 
-    //  var contentDiv = document.createElement("div");
-    //  contentDiv.innerHTML = this._content;
-    //  contentDiv.className = "content";
-    //  var clear = document.createElement("div");
-    //  clear.className = "clearfix";
-    //  div.appendChild(innerDiv);
-    //  innerDiv.appendChild(contentDiv);
-    //  innerDiv.appendChild(clear);
-     
+      div = this._div = document.createElement("div");
+      div.className = "info-window-wrapper";
+      var innerDiv = document.createElement("div");
+      innerDiv.className = "info-window";
+      innerDiv.style.height = this._height;
+      innerDiv.style.width = this._width;
+
       if (this._template) {
-        div = this._div = this._template;
+        var contentDiv = document.createElement("div");
+        contentDiv.innerHTML = this._template[0].innerHTML;
+      } else {
+        contentDiv.innerHTML = this._content;
       }
+
+      contentDiv.className = "content";
+
+      var clear = document.createElement("div");
+      clear.className = "clearfix";
+      div.appendChild(innerDiv);
+      innerDiv.appendChild(contentDiv);
+      innerDiv.appendChild(clear);
 
       panes.floatPane.appendChild(div);
       this.panMap();
+
     } else if (div.parentNode != panes.floatPane) {
       // The panes have changed.  Move the div.
       div.parentNode.removeChild(div);
