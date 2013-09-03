@@ -1,4 +1,4 @@
-angular.module("content-window",["broadcastService"]).directive("contentWindow", function($compile, broadcastService) {
+angular.module("cWindow",["broadcastService"]).directive("contentWindow", function($compile, broadcastService, $rootScope) {
   function scoreToRats(score) {
     return score >= 90 ? 0 :
            score >= 79 && score <= 89 ? 1 :
@@ -6,30 +6,71 @@ angular.module("content-window",["broadcastService"]).directive("contentWindow",
            score < 69 && score >= 59 ? 3 : 4;
   }
 
+  function ratImgString(numRats) {
+    var ratImgString = "";
+
+    for (var i = 0; i < numRats; i++) {
+      ratImgString += '<img src="<%= asset_path("cute_rat.svg")%>" height="30" width="30">';
+    }
+
+    return ratImgString;
+  }
+
   return {
     restrict: "EA",
     replace: true,
-    template: "<div class='rat-icons clearfix'><p>{{businessName}}</p><a class='ratings-link' href='#' data-ng-hide='!violations' data-ng-click='seeBusiness(index)'>SEE VIOLATIONS</a><p data-ng-show='!violations'>VERMIN FREE!</p></div>",
-    scope: {
-      businessName: "@"
-    },
-    /*controller: function($scope) {
-      $scope.violations = false;
-      $scope.seeBusiness = function() {};
+    template: "<div><div><p class='helvetica business-name'>{{businessName}}</p><div class='clearfix rat-icons'></div><a class='ratings-link' href='#' data-ng-hide='!violations' data-ng-click='seeBusiness()'>SEE VIOLATIONS!</a><p class='no-violations' data-ng-show='!violations'>VERMIN FREE!</p></div></div>",
+    scope: true,
+		compile: function(element, attrs) {
+			var scoreAsRats = scoreToRats(parseInt(attrs.score));
+			
+      if (scoreAsRats > 0) element.find(".rat-icons").html(ratImgString(scoreAsRats));
 
-      $scope.$on("closeModal", function(evt, data) {
-        angular.forEach(data, function(businessObj, index) {
-          $scope.violations = scoreToRats(businessObj.average_score) === 0 ? false : true;
-          $scope.businessName = businessObj.business.name;
-        });
-      });
-    },*/
-      link: function(scope, element, attrs) {
-        console.log(arguments)
-        scope.businessName = attrs.businessName;
-        var sc = scoreToRats(parseInt(attrs.score))
-        scope.violations = scoreToRats(parseInt(attrs.score)) === 0 ? false : true;
-        scope.$apply();
-      }
+      return {
+      	pre: function() {},
+      	post: function(scope, element, attrs) {
+	        scope.seeBusiness = function() {
+						if (scope.activeBusiness) {
+							broadcastService.broadcast("HideBusiness");
+							scope.activeBusiness = !scope.activeBusiness;
+						}
+						
+	          broadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
+						scope.activeBusiness = !scope.activeBusiness;
+	        };
+        	
+					scope.activeBusiness = false;
+					scope.businessName = attrs.businessName;
+	        scope.violations = scoreAsRats === 0 ? false : true;
+					scope.businessIndex = attrs.businessIndex;
+					
+					// TODO this feels like a hack but I cant seem to get everything scoped
+					// correctly any other way.
+	        scope.$apply(function() {
+	          $compile(element.html())(scope);
+						if(scope.violations) {
+	            var interval = setInterval(function() {
+								// this seems to take a few hundred milliseconds to appear on the page
+	              if ($(".ratings-link").is(":visible")) {
+	                clearInterval(interval);
+	                $(".ratings-link").on("click", function() {
+	                  scope.seeBusiness();
+	                });
+	               }
+	            },25);
+						}
+	        });
+				
+					scope.$on("$destroy", function() {
+						if (scope.activeBusiness) broadcastService.broadcast("HideBusiness");
+						$(".ratings-link").off();
+					});
+					
+					$rootScope.$on("DestroyContentWindow", function() {
+						scope.$destroy();
+					});
+	      } 
+    	};
+		}
   };
 });

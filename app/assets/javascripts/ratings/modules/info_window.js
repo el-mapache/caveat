@@ -11,10 +11,9 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
     this._map = opts.map;
     this._offsetVertical = -110;
     this._offsetHorizontal = 10;
-    this._height = 75;
-    this._width = 280;
-    this._content = opts.content;
-    this._template = opts.template || null;
+    this._height = 74;
+    this._width = 220;
+    this._content = opts.content || "";
     var me = this;
 
     this._onBoundsChange = google.maps.event.addListener(this._map, "bounds_changed", function() {
@@ -82,12 +81,12 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
       innerDiv.className = "info-window";
       innerDiv.style.height = this._height;
       innerDiv.style.width = this._width;
+      var contentDiv = document.createElement("div");
 
-      if (this._template) {
-        var contentDiv = document.createElement("div");
-        contentDiv.innerHTML = this._template[0].innerHTML;
-      } else {
+      if (typeof this._content === "string") {
         contentDiv.innerHTML = this._content;
+      } else {
+        contentDiv.innerHTML = this._content[0].innerHTML;
       }
 
       contentDiv.className = "content";

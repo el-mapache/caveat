@@ -6,7 +6,6 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
    *   offsetVertical, offsetHorizontal, className, height, width
    */
   function InfoBox(opts) {
-    console.log(opts)
     google.maps.OverlayView.call(this);
     this._latlng = opts.latlng;
     this._map = opts.map;

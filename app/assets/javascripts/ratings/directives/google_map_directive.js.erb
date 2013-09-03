@@ -1,4 +1,4 @@
-angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'fileLoader', 'content-window']).directive("googleMap", function($compile,$http,broadcastService,geolocationService, Pin, fileLoader) {
+angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'fileLoader','cWindow']).directive("googleMap", function($compile,$http,broadcastService,geolocationService, Pin, fileLoader) {
   var _defaults = {
     zoom: 14,
     center: new google.maps.LatLng(37.7750, -122.4183),
@@ -19,7 +19,7 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
     }
     return map;
   }
-
+  
   return {
     priority: 100,
     restrict: 'EA',
@@ -28,32 +28,27 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
     transclude: true,
     scope: true,
     controller: function($scope, $compile, broadcastService) {
-      var template = null; 
-  
       $scope.currentMarker = null;
       $scope.businesses = null;
       $scope.markers = [];
 
-      $scope.$on('closeModal', function(evt, data) {
+      $scope.setUpMarkers = function(data) {
         $scope.move(17);
         $scope.businesses = data;
 
         angular.forEach(data, function(businessObj, index) {
           var business = businessObj.business,
-              message = null;
-
-          a = 1;
-            for(var i = 0; i<a;i++) {
-              //tm += '<img src="<%= asset_path("cute_rat.svg")%>" class="pull-left" height="35" width="35">';
-            }
-
-          var message = null;
-          template = $compile("<div content-window business-name="+business.name.replace(/ /,"-")+" score="+businessObj.average_score+"></div>")($scope);
-
-          $scope.addMarker(business.latitude, business.longitude, message, index, template);
-        });
-      });
+							data = { 
+								businessName: business.name, 
+								score: businessObj.most_recent_score,
+								index: index 
+							};
+		
+          $scope.addMarker(business.latitude, business.longitude, data, index);
+        }); 
+      };
       
+			// Force a re-draw of the google map
       $scope.refresh = function() {
         google.maps.event.trigger($scope.map, "resize");
       };
@@ -66,38 +61,44 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
             lng = geolocationService.currentPosition.longitude
 
         $scope.map.panTo(new google.maps.LatLng(lat, lng));
-        if (!angular.isUndefined(zoom))
-          $scope.map.setZoom(zoom);
+        
+				if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
       };
 
-      $scope.addMarker = function(lat, lng, message, index, template) {
+      $scope.addMarker = function(lat, lng, data, index) {
         var location = new google.maps.LatLng(lat, lng),
             marker = new Pin({
               map: $scope.map,
               draggable: false,
               animation: google.maps.Animation.DROP,
               icon: "<%= asset_path('black_marker.svg') %>",
-              position: location
-            }, message, index, template);
+              position: location,
+              enableEventPropagation: true
+            }, data, index);
+
         google.maps.event.addDomListener(marker, 'click', $scope.setCurrentWindow);
+
         $scope.markers.push(marker);
       };
 
       $scope.setCurrentWindow = function() {
-        if ($scope.currentMarker) $scope.currentMarker.toggleInfoWindow();
+        if ($scope.currentMarker) { 
+          $scope.currentMarker.toggleInfoWindow();
+				 	broadcastService.broadcast("DestroyContentWindow");
+          
+					if ($scope.currentMarker === this) {
+            $scope.currentMarker = null;
 
-        if ($scope.currentMarker === this) {
+            return false;
+          }
+
           $scope.currentMarker = null;
-         // broadcastService.broadcast("HideBusiness");
-          return false;
         }
         
+        $scope.map.panTo(this.getPosition());
+        var template = $compile('<div content-window business-index="' + this.index + '" business-name="'+this.data.businessName +'" score="'+this.data.score+'"></div>')($scope);
+       	this.toggleInfoWindow(template)
         $scope.currentMarker = this;
-
-        $scope.map.panTo($scope.currentMarker.getPosition());
-        $scope.currentMarker.toggleInfoWindow()
-       // broadcastService.broadcast("ShowBusiness", $scope.businesses[this.index]);
-
       };
     },
     link: function(scope, element, attrs, controller) {
@@ -122,9 +123,14 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
         scope.map = drawMap(element[0], options, styledMap);
       });
 
-      scope.$on("closeModal", function() {
+      scope.$on("closeModal", function(evt, data) {
         element.removeClass("sepia-blur");
+        scope.setUpMarkers(data);
       });
+
+			scope.$on("$destroy", function() {
+				console.log(arguments);
+			})
     }
   };
 });

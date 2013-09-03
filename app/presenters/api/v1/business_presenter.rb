@@ -10,7 +10,8 @@ class API::V1::BusinessPresenter
       businesses.map do |b|
         {
           business: b,
-          by_year: by_year(b),
+          inspections_violations: inspections_violations(b),
+          most_recent_score: b.inspections.first.score,
           average_score: average(b.inspections)
         }
       end
@@ -20,17 +21,22 @@ class API::V1::BusinessPresenter
       inspections.inject(0) { |sum, i| sum + i.score } / inspections.length
     end
 
-    def by_year(business)
+    def inspections_violations(business)
       v_i = {}
       violations = business.violations
 
-      business.inspections.sort_by {|i| i.date }.reverse.each do |ins|
+      business.inspections.each do |ins|
         key = [ins.date.year, "_", ins.id].join("")
         v_i[key] = {
-          inspection: ins,
+          inspection: {
+            formatted_date: ins.date.strftime("%B %d, %Y"),
+            inspection: ins
+          },
           violations: violations.select {|v| v if v.date == ins.date}
         }
+        v_i[key][:violations_count] = v_i[key][:violations].length
       end 
+      
       v_i
     end
 

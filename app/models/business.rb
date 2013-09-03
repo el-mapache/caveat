@@ -3,12 +3,12 @@ class Business < ActiveRecord::Base
                   :name, :phone, :state, :zip_code
 
   has_many :violations
-  has_many :inspections
+  has_many :inspections, order: "date DESC"
 
   validates :name, presence: true
 
   # Multiple business may have the same name (i.e. McDonalds),
-  # but they can't exist in the same place at once...
+  # but they can't exist in the same place at once...in this dimension, anyway
   validates :name, uniqueness: { scope: [:latitude, :longitude] }
   validates :latitude, format: {
              with: /^\s*[-+]?\d+/,

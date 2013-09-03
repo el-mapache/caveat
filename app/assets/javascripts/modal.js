@@ -1,4 +1,4 @@
-var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService','broadcastService','google-map']);
+var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService','broadcastService','google-map','simple-sort']);
 // This controller simply provides a wrapper for the bootstrap dialog
 // directive.
 app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
@@ -61,7 +61,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
   $scope._getBusinesses = function(position) {
     $http({
       method: "GET",
-      url: "http://localhost:3000/api/v1/businesses",
+      url: "http://localhost:1337/api/v1/businesses",
       params: {
         lat: position.coords.latitude,
         lng: position.coords.longitude

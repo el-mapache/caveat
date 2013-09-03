@@ -19,19 +19,22 @@
   %h4
     {{ businessObj.business.address}}
 
-  %table.table
+  %table.table.first
     %thead
-      %tr
-        %th Date
-        %th Type
-        %th Score
-  %div{"ng-repeat" => "i in businessObj.by_year"}
-    %table.table.table-hover.table-first
+      %tr.ratings-white-bg.ratings-black
+        %th.score.ratings-black-bg.ratings-white Score
+        %th.date Date
+        %th Violation Count
+        %th Inspection Type
+
+  %div{"ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
+    %table.table.table-first
       %tbody
         %tr{"ng-click" => "showViolations = !showViolations"}
-          %td {{ i.inspection.date }}
-          %td {{ i.inspection.visit_type }}
-          %td {{ i.inspection.score }}
+          %td.score {{ i.inspection.inspection.score }}
+          %td.date {{ i.inspection.formatted_date }}
+          %td.violations-count {{ i.violations_count }}
+          %td {{ i.inspection.inspection.visit_type }}
     %table.table{style: "display: none", "ng-show" => "showViolations", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}
       %thead
         %tr
