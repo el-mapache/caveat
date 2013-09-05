@@ -1,51 +1,15 @@
-#title-badge
-  .pull-left.molot
-    %span.reset.hero-title RAT
-    %h2.inliner INGS
-  #raticon.pull-left
-    = image_tag("badge.svg", width: 60, height: 60)
-    = image_tag("cute_rat.svg", height: 60, width: 60, class: "rat-svg")
+= render "title"
 
 #myModal{data: {"ng-controller" => "DialogCtrl"}}
-
+  
 %div#map-canvas.sepia-blur{"google-map"=>"", "ng-controller" => "MapCtrl", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}} 
 
 %div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}}
-  %div
-    %p
-      {{ businessObj.average_score }}
-  %h2
-    {{ businessObj.business.name}}
-  %h4
-    {{ businessObj.business.address}}
+  = render "business_banner"
 
-  %table.table.first
-    %thead
-      %tr.ratings-white-bg.ratings-black
-        %th.score.ratings-black-bg.ratings-white Score
-        %th.date Date
-        %th Violation Count
-        %th Inspection Type
-
-  %div{"ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
-    %table.table.table-first
-      %tbody
-        %tr{"ng-click" => "showViolations = !showViolations"}
-          %td.score {{ i.inspection.inspection.score }}
-          %td.date {{ i.inspection.formatted_date }}
-          %td.violations-count {{ i.violations_count }}
-          %td {{ i.inspection.inspection.visit_type }}
-    %table.table{style: "display: none", "ng-show" => "showViolations", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}
-      %thead
-        %tr
-          %th Description
-          %th Pending?
-          %th Addressed On
-        %tbody
-          %tr{"ng-repeat" => "v in i.violations"}
-            %td {{ v.description }}
-            %td {{ v.pending }}
-            %td {{ v.corrected_on }}
+  %div{style: "width:90%;margin-left:auto;margin-right:auto;"}
+    %div{style: "border: 4px solid #3a3939;margin-top:40px"}
+      = render "business_table"
         
 -#%div
   %button#geocode See places near me

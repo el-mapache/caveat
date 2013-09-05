@@ -1,0 +1,24 @@
+%table.table.first
+  %thead
+    %tr.ratings-black-bg.ratings-white
+      %th.score SCORE
+      %th.violations-count VIOLATIONS COUNT
+      %th.date DATE
+%div{"ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
+  %table.table.business-table
+    %tbody
+      %tr{"ng-click" => "showViolations = !showViolations", "ng-class" => "{active: showViolations}"}
+        %td.score.bordered 
+          %h3
+            {{ i.inspection.inspection.score }}
+        %td.violations-count.bordered {{ i.violations_count }}
+        %td.date {{ i.inspection.formatted_date }}
+  %table.table{style: "display: none", "ng-class" => "{active: showViolations}", "ng-show" => "showViolations", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}
+    %thead
+      %tr.ratings-black-bg.ratings-white
+        %th DESCRIPTION
+        %th CORRECTED?
+      %tbody
+        %tr{"ng-repeat" => "v in i.violations"}
+          %td.bordered {{ v.description }}
+          %td {{ v.pending ? "no" : "yes" }}

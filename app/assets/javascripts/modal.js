@@ -7,7 +7,7 @@ app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
     keyboard: false,
     backdropClick: false,
     template: $templateCache.get("modal.html"),
-    dialogClass: "modal span7",
+    dialogClass: "modal",
     backdropFade: true,
     controller: "_ContentCtrl"
   };
