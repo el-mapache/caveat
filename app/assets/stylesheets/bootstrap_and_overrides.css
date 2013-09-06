@@ -214,12 +214,12 @@ img[src*="iws3.png"] {
 }
 
 #title-badge span {
-  color: #e2ebd6;
+  text-shadow: -3px -2px 0px #3a3939;
 }
 
 #title-badge h2 {
   margin-left: -15px;
-  color: #e2ebd6;
+  text-shadow: -3px -2px 0px #3a3939;
 }
 
 #raticon {

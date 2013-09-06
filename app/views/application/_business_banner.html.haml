@@ -1,13 +1,13 @@
-%h1.bold-sans.ratings-black{style: "width: auto;margin-top:20px;margin-bottom:20px;text-align:center"}
+%h1.bold-sans.ratings-black{style: "width: auto;margin-top:20px;margin-bottom:15px;text-align:center"}
   {{ businessObj.business.name }}
-%div.pull-left{style: "background: rgba(228, 123, 61, 0.65);float: right;margin-right: 3%;-webkit-transform: scale(0.8);padding: 20px;"}
+%div.pull-left{style: "background: rgba(228, 123, 61, 0.21);float: right;margin-right: 3%;-webkit-transform: scale(0.7);padding: 5px;"}
   %h5.serif.pull-left{style: "margin-bottom: 0px"}
     ALL-TIME
   .pull-left{style: "position: relative;width: 35px;margin-left:5px;margin-top:0px"}
     %img{alt: "Badge", height: "80", src: "/assets/badge.svg", width: "80", style: "top:-25%;z-index:1"}
     %h4.serif.ratings-white{style: "position: absolute;top: 2%;left: 21%;font-size: 17.5px;z-index:2;"}
       {{ average }}
-  .clearfix
-  .molot.ratings-white
+  .molot.ratings-white.pull-left
     %span.reset{style: "font-size: 46px;"} RAT
     %h2.inliner{style: "margin-left: -10px"} ING
+  .clearfix
