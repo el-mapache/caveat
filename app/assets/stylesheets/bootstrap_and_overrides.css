@@ -51,6 +51,10 @@ img[src*="iws3.png"] {
   margin-right: auto !important;
 }
 
+.center-align {
+  text-align: center;
+}
+
 .rats {
   background-image: url(/assets/small_rats.jpg);
 }
@@ -75,6 +79,20 @@ img[src*="iws3.png"] {
   width: 100%;
 }
 
+.modal h2, .modal h3, .modal h1, .modal h4 {
+  display: inline;
+}
+
+.modal h1 {
+  margin-left: 10px;
+  margin-right: -5px;
+  text-shadow: -2px -2px 1px whitesmoke;
+}
+
+#myModal {
+
+}
+
 .modal-content {
   background: transparent;
 }
@@ -82,21 +100,6 @@ img[src*="iws3.png"] {
 .modal-header {
   border: none;
 }
-
-
-/* Psuedo element creates a transparent background image */
-/*#myModal .modal-header:after {
-   border-radius: 4px 4px;
-   content: "";
-   top: 0;
-   left: 0;
-   bottom: 0;
-   right: 0;
-   position: absolute;
-   z-index: -1; 
-   opacity: 0.10;
-   background: url(/assets/giants_rats.jpg) 10% 10% no-repeat;
-}*/
 
 .spin-wrapper {
   position: relative;
@@ -394,7 +397,7 @@ tr {
   background: #DEF1C4;
 }
 
-tr:hover td.bordered {
+tr:hover td.bordered, tr.active td.bordered {
   border-right: 1px dashed #AAA2A2;
 }
 
@@ -431,21 +434,21 @@ td.bordered {
 
 .ratings-btn {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 20px 10px;
   margin-bottom: 0;
   font-size: 17px;
   line-height: 20px;
-  color: #3a3939;
-  background-color: #e2ebd6;
+  color: #e2ebd6;
+  background-color: #3a3939;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   border-width: 4px;
   border-style: solid;
-  border-color: #715D51
-  -moz-transition: border-color 0.5s ease;
-  -webkit-transition: border-color 0.5s ease;
-  transition: border-color 0.5s ease;
+  border-color: #715D51;
+  -moz-transition: border-color 0.35s linear;
+  -webkit-transition: border-color 0.35s linear;
+  transition: border-color 0.35s linear;
 }
 
 .ratings-btn:hover {
