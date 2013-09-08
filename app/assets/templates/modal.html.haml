@@ -1,6 +1,6 @@
 #myModal
   %div{style: "width: 50%;margin:0 auto"}
-    %div{style: "text-align: center;"} 
+    .center-align
       %h3.yellow.serif
         In San Francisco, health inspectors handed out
       %h1.ratings-red.molot
@@ -14,7 +14,7 @@
     .clearfix
     %br
     %br
-    %div{style: "text-align: center;"}
+    .center-align
       %p{class: "alert alert-error", data: {"ng-show" => "error.hasError"}}
         {{error.message}}
       %button#locate.ratings-btn.thin-sans{data: {"ng-click" => "locate()", "ng-disabled" => "!active"}} What's dirty near me?

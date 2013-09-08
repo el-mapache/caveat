@@ -44,7 +44,7 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 	        scope.violations = scoreAsRats === 0 ? false : true;
 					scope.businessIndex = attrs.businessIndex;
 					
-					// TODO this feels like a hack but I cant seem to get everything scoped
+					// TODO this is a hack but I cant seem to get everything scoped
 					// correctly any other way.
 	        scope.$apply(function() {
 	          $compile(element.html())(scope);
@@ -53,7 +53,8 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 								// this seems to take a few hundred milliseconds to appear on the page
 	              if ($(".ratings-link").is(":visible")) {
 	                clearInterval(interval);
-	                $(".ratings-link").on("click", function() {
+	                $(".ratings-link").on("click", function(evt) {
+                    evt.stopPropagation();
 	                  scope.seeBusiness();
 	                });
 	               }

@@ -116,11 +116,7 @@ img[src*="iws3.png"] {
   background: rgba(215, 80, 68, 0.75);
   position: absolute;
   padding: 5px;
-  border-radius: 2px 2px;
-  -moz-border-radius: 2px 2px;
-  -webkit-border-radius: 2px 2px;
   -webkit-transform: translateZ(103px);
-  box-shadow: 1px 1px 6px rgb(75, 69, 69);
 }
 
 .info-window {
@@ -129,11 +125,8 @@ img[src*="iws3.png"] {
   display: none;
   box-shadow: 0px 0px 4px #080B0C;
   height: auto;
-  width: 260px;
+  width: 220px;
   background: #3a3939;
-  border-radius: 2px 2px;
-  -moz-border-radius: 2px 2px;
-  -webkit-border-radius: 2px 2px;
 	z-index: 100000000000000000000;
 }
 
@@ -420,7 +413,7 @@ td.bordered {
 }
 
 .table th.score, .table td.score {
-	width: 12%;
+	width: 15%;
 }
 
 .table th.date, .table td.date, 

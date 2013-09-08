@@ -13,12 +13,13 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
     this._offsetHorizontal = 10;
     this._height = 74;
     this._width = 220;
-    this._content = opts.content || "";
+    this.content = opts.content || "";
     var me = this;
 
     this._onBoundsChange = google.maps.event.addListener(this._map, "bounds_changed", function() {
       return me.panMap.apply(me);
     });
+    
     // Once the properties of this OverlayView are initialized, set its map so
     // that we can display it.  This will trigger calls to panes_changed and
     // draw.
@@ -38,7 +39,17 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
       this.setMap(null);
     }
   };
+  
+  // Dynmically assign the wrapper once the inner div's contents have been filled in
+  
+  InfoBox.prototype._resizeWindowWrapper = function(evt, marker) {
+    window.a = this;
+    var wrapper = this._div;
 
+    wrapper.style.height = this._div.querySelector(".info-window").clientHeight +"px";
+    wrapper.style.width = this._div.querySelector(".info-window").clientWidth + "px";
+  };
+  
   /* Redraw the Bar based on the current projection and zoom level
    */
   InfoBox.prototype.draw = function() {
@@ -58,6 +69,7 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
     div.style.left = (pixPosition.x + this._offsetHorizontal) + "px";
     div.style.height = this._height + "px";
     div.style.top = (pixPosition.y + this._offsetVertical) + "px";
+    this._resizeWindowWrapper();
   };
 
   /* Creates the DIV representing this InfoBox in the floatPane.  If the panes
@@ -83,10 +95,10 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
       innerDiv.style.width = this._width;
       var contentDiv = document.createElement("div");
 
-      if (typeof this._content === "string") {
-        contentDiv.innerHTML = this._content;
+      if (typeof this.content === "string") {
+        contentDiv.innerHTML = this.content;
       } else {
-        contentDiv.innerHTML = this._content[0].innerHTML;
+        contentDiv.innerHTML = this.content[0].innerHTML;
       }
 
       contentDiv.className = "content";
