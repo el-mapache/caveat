@@ -24,7 +24,8 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 		compile: function(element, attrs) {
 			var scoreAsRats = scoreToRats(parseInt(attrs.score));
 			
-      if (scoreAsRats > 0) element.find(".rat-icons").html(ratImgString(scoreAsRats));
+      if (scoreAsRats > 0) 
+        element.find(".rat-icons").html(ratImgString(scoreAsRats));
 
       return {
       	pre: function() {},
@@ -33,9 +34,11 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 						if (scope.activeBusiness) {
 							broadcastService.broadcast("HideBusiness");
 							scope.activeBusiness = !scope.activeBusiness;
+							return;
 						}
 						
 	          broadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
+	        
 						scope.activeBusiness = !scope.activeBusiness;
 	        };
         	

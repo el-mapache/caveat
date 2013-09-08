@@ -98,6 +98,7 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
         $scope.map.panTo(this.getPosition());
         var template = $compile('<div content-window business-index="' + this.index + '" business-name="'+this.data.businessName +'" score="'+this.data.score+'"></div>')($scope);
        	this.toggleInfoWindow(template)
+       	
         $scope.currentMarker = this;
       };
     },
