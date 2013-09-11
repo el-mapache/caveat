@@ -4,4 +4,3 @@ angular.module('templates', []).run(function($templateCache) {
     $templateCache.put("<%= File.basename(f).gsub(/\.haml$/,'') %>", <%= Haml::Engine.new(File.read(f)).render.to_json %>);
   <% end %>
 });
-

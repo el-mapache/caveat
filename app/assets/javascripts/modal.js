@@ -34,7 +34,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
   $scope.locate = function() {
     $scope._showSpinner();
     $scope.toggleActive();
-    geo.getPosition(function(response) {
+    geo.reverseGeocode(function(response) {
       // Since this callback is executed in a different scope
       // it has to be wrapped in an angular apply to update the DOM
       $scope.$apply(function() {
@@ -58,13 +58,14 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
     }).spin(document.getElementById("locate"));
   };
   
-  $scope._getBusinesses = function(position) {
+  $scope._getBusinesses = function(response) {
     $http({
       method: "GET",
       url: "http://localhost:1337/api/v1/businesses",
       params: {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lat: response.position.coords.latitude,
+        lng: response.position.coords.longitude,
+        address: response.address
       }
     }).success(function(data, status, headers, config) {
       dialog.close();
@@ -80,7 +81,7 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
 
 app.controller("BusinessCtrl", function($scope, broadcastService) {
   $scope.showBusiness = false;
-  $scope.showViolations = false;
+  // $scope.showViolations = false;
 
   $scope.toggleBusinessWindow = function() {
     return $scope.showBusiness = !$scope.showBusiness;
@@ -99,4 +100,9 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
     
     $scope.$apply();
   });  
+});
+
+app.controller("AccordionCtrl", function($scope) {
+  $scope.limitOne = true;
+
 });

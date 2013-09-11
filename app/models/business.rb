@@ -22,11 +22,11 @@ class Business < ActiveRecord::Base
   class << self
     # Find all nearby businesses along with their associations
     #
-    # @param {coords} Array Latitude and longitude
+    # @param {location} Array Latitude and longitude or address string
     # @param {limit} Integer nearby business to be returned
     # @param {distance} Integer Radius in miles around coords to be searched
-    def all_with_associations(coords, limit = 20, distance = 2)
-      Business.near(coords, distance)
+    def all_with_associations(location, limit = 20, distance = 3)
+      Business.near(location, distance)
               .includes(:violations, :inspections)
               .limit(limit)
     end

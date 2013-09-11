@@ -1,21 +1,21 @@
 #myModal
-  %div{style: "width: 50%;margin:0 auto"}
+  %div{style: "width: 40%;margin:0 auto"}
     .center-align
       %h3.yellow.serif
-        In San Francisco, health inspectors handed out
+        San Francisco health inspectors gave
       %h1.ratings-red.molot
         OVER 3 VIOLATIONS 
       %h4.ratings-white.serif
-        to
+        per inspection to
       %h1.ratings-red.molot
         73% OF RESTAURANTS 
       %h4.yellow.serif
-        in the past year...
+        this past year...
     .clearfix
     %br
     %br
     .center-align
       %p{class: "alert alert-error", data: {"ng-show" => "error.hasError"}}
         {{error.message}}
-      %button#locate.ratings-btn.thin-sans{data: {"ng-click" => "locate()", "ng-disabled" => "!active"}} What's dirty near me?
+      %button#locate.ratings-btn.thin-sans.span3{data: {"ng-click" => "locate()", "ng-disabled" => "!active"}} How dirty are restaurants near me?
   .clearfix

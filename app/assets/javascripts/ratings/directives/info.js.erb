@@ -12,6 +12,10 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
     for (var i = 0; i < numRats; i++) {
       ratImgString += '<img src="<%= asset_path("cute_rat.svg")%>" height="30" width="30">';
     }
+    
+    for(var i = 0; i < 4 - numRats; i++) {
+      ratImgString += "<img src=\"<%=asset_path('cute_rat_empty.svg') %>\" height='30' width='30'>";
+    }
 
     return ratImgString;
   }

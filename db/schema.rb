@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130728154533) do
+ActiveRecord::Schema.define(:version => 20130910153540) do
 
   create_table "businesses", :force => true do |t|
     t.string   "name"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(:version => 20130728154533) do
     t.integer  "violations_count"
     t.integer  "inspections_count"
   end
+
+  add_index "businesses", ["latitude", "longitude"], :name => "index_businesses_on_latitude_and_longitude"
 
   create_table "inspections", :force => true do |t|
     t.integer  "business_id"

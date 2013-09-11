@@ -5,11 +5,13 @@
 %div#map-canvas.sepia-blur{"google-map"=>"", "ng-controller" => "MapCtrl", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}} 
 
 %div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}}
-  = render "business_banner"
-  .clearfix
-  %div{style: "width:90%;margin-left:auto;margin-right:auto;"}
-    %div{style: "border: 4px solid #3a3939;margin-top:20px"}
-      = render "business_table"
+  %div{style: "margin-left:30px;width:90%;margin-left:auto;margin-right:auto;"}
+    = render "business_banner"
+    .clearfix
+    %div
+      %h5 Click a previous inspection to see violations.
+      %div{style: "border: 4px solid #3a3939;margin-top:20px", data: {"ng-controller" => "AccordionCtrl"}}
+        = render "business_table"
         
 -#%div
   %button#geocode See places near me
