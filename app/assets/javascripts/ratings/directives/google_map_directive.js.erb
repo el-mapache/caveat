@@ -1,4 +1,4 @@
-angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'fileLoader','cWindow']).directive("googleMap", function($compile,$http,broadcastService,geolocationService, Pin, fileLoader) {
+angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'fileLoader','cWindow']).directive("googleMap", function($compile,$http,broadcastService,geolocationService, Pin, fileLoader,$timeout) {
   var _defaults = {
     zoom: 14,
     center: new google.maps.LatLng(37.7750, -122.4183),
@@ -62,6 +62,7 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
 
         $scope.map.panTo(new google.maps.LatLng(lat, lng));
         
+        // Zoom in the map if a new zoom was specified.
 				if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
       };
 
@@ -82,10 +83,15 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
       };
 
       $scope.setCurrentWindow = function() {
-        if ($scope.currentMarker) { 
+        if ($scope.currentMarker) {          
+          // Remove the info window from the DOM/Google map
           $scope.currentMarker.toggleInfoWindow();
-				 	broadcastService.broadcast("DestroyContentWindow");
           
+          // Remove the child controller scope from angular
+				 	broadcastService.broadcast("DestroyContentWindow");
+				 	
+				 	// If the user clicked on the currently selected marker, we obviously
+				 	// don't want to reload the template.
 					if ($scope.currentMarker === this) {
             $scope.currentMarker = null;
 
@@ -101,6 +107,7 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
        	
         $scope.currentMarker = this;
       };
+      
     },
     link: function(scope, element, attrs, controller) {
       var styledMap = null, options = null;
@@ -128,10 +135,6 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
         element.removeClass("sepia-blur");
         scope.setUpMarkers(data);
       });
-
-			scope.$on("$destroy", function() {
-				console.log(arguments);
-			})
     }
   };
 });

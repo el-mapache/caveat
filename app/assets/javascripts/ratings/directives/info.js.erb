@@ -19,7 +19,9 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 
     return ratImgString;
   }
-
+  
+  // Template annoyingly in the function as templateUrl doesnt load fast enough 
+  // to handle dynamic content
   return {
     restrict: "EA",
     replace: true,
@@ -34,22 +36,21 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
       return {
       	pre: function() {},
       	post: function(scope, element, attrs) {
-	        scope.seeBusiness = function() {
+      	  scope.activeBusiness = false;
+					scope.businessName = attrs.businessName;
+	        scope.violations = scoreAsRats === 0 ? false : true;
+					scope.businessIndex = attrs.businessIndex;
+      	  
+	        scope.seeBusiness = function(evt, business) {
 						if (scope.activeBusiness) {
 							broadcastService.broadcast("HideBusiness");
-							scope.activeBusiness = !scope.activeBusiness;
-							return;
+						  return scope.toggleBusiness();
 						}
 						
 	          broadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
 	        
-						scope.activeBusiness = !scope.activeBusiness;
+						scope.toggleBusiness();
 	        };
-        	
-					scope.activeBusiness = false;
-					scope.businessName = attrs.businessName;
-	        scope.violations = scoreAsRats === 0 ? false : true;
-					scope.businessIndex = attrs.businessIndex;
 					
 					// TODO this is a hack but I cant seem to get everything scoped
 					// correctly any other way.
@@ -68,15 +69,26 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 	            },25);
 						}
 	        });
-				
+				  
+				  scope.toggleBusiness = function() {
+				    scope.activeBusiness = !scope.activeBusiness;
+				  };
+				  
 					scope.$on("$destroy", function() {
-						if (scope.activeBusiness) broadcastService.broadcast("HideBusiness");
+						if (scope.activeBusiness) {
+						  broadcastService.broadcast("HideBusiness");
+					  }
+					  
 						$(".ratings-link").off();
 					});
 					
 					$rootScope.$on("DestroyContentWindow", function() {
 						scope.$destroy();
 					});
+					
+      	  $rootScope.$on("HideSidebar", function() {
+            scope.toggleBusiness();
+      	  });
 	      } 
     	};
 		}

@@ -174,6 +174,10 @@ img[src*="iws3.png"] {
   width: 60%;
 }
 
+.info-window .rat-icons:visible {
+  min-height: 30px;  
+}
+
 .white {
   color: white;
 }
@@ -395,18 +399,6 @@ td.bordered {
   border-bottom: 5px solid;
 }
 
-.violations-table {
-  display: block;
-}
-
-.violations-table th.first-child {
-  width: 70%;
-}
-
-.violations-table th:last-child {
-  width: 30%;
-}
-
 .ratings-btn {
   float: none;
   display: inline-block;
@@ -435,4 +427,7 @@ td.bordered {
 .accordion {
   margin-bottom: 0px;
 }
+
+a {
+/*  color: #25548A;*/
 }

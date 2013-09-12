@@ -75,16 +75,22 @@ app.controller("_ContentCtrl", function($scope, $http, dialog, geolocationServic
         hasError: true,
         message: "Something has gone horribly wrong."
       };
+      $scope.toggleActive();
     });
   };
 });
 
 app.controller("BusinessCtrl", function($scope, broadcastService) {
   $scope.showBusiness = false;
-  // $scope.showViolations = false;
-
+  
+  $scope.hideSidebar = function() {
+    broadcastService.broadcast("HideSidebar", $scope.businessObj);
+    $scope.toggleBusinessWindow();
+  }
+  
+  // Hides or shows the business sidebar
   $scope.toggleBusinessWindow = function() {
-    return $scope.showBusiness = !$scope.showBusiness;
+    $scope.showBusiness = !$scope.showBusiness;
   };
   
   $scope.$on("HideBusiness", function(evt) {
@@ -93,16 +99,15 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
   });
 
   $scope.$on("ShowBusiness", function(evt, businessObj) {
+    // Set up our businessObj for client-side display
     $scope.businessObj = businessObj;
     $scope.average = $scope.businessObj.average_score;
 
-    if (!$scope.showBusiness) $scope.toggleBusinessWindow();
+    if (!$scope.showBusiness) 
+      $scope.toggleBusinessWindow();
     
     $scope.$apply();
   });  
 });
 
-app.controller("AccordionCtrl", function($scope) {
-  $scope.limitOne = true;
-
-});
+app.controller("AccordionCtrl", function($scope) {});

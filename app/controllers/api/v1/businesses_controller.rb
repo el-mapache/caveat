@@ -1,9 +1,7 @@
 class API::V1::BusinessesController < ApplicationController
-  require "geocoder"
-
   def index    
-    coords = params[:lat].to_s + "," + params[:lng].to_s
     cache = $redis.get(params[:address])
+    
     if cache
       @businesses = JSON.parse(cache)
     else

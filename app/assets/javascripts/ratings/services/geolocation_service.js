@@ -1,13 +1,28 @@
 angular.module("geolocationService", []).service("geolocationService", function() {
   var supported = "geolocation" in navigator;
-
+  
+  function parseGeocodeResults(address) {
+    var position = {
+      coords: {
+        latitude: "", 
+        longitude: "" 
+      }
+    };
+    
+    position.coords.latitude = address.geometry.location.lat();
+    position.coords.longitude = address.geometry.location.lng();
+    return {
+      address: address.formatted_address,
+      position: position
+    }
+  }
+  
   return {
     isSupported: function() {
       return supported;
     },
     
     currentPostion: null,
-      
 
     getPosition: function(onSuccess, onError) {
       var self = this;
@@ -28,17 +43,11 @@ angular.module("geolocationService", []).service("geolocationService", function(
         geocoder.geocode({'latLng': latlng}, function(results, status) {
           if (status === google.maps.GeocoderStatus.OK) {
             if (results[1]) {
-              console.log(results)
-              var position = {coords: {latitude: "", longitude: ""}};
-              position.coords.latitude = results[1].geometry.location.lat();
-              position.coords.longitude = results[1].geometry.location.lng();
-              console.log(position)
-              callback({address: results[1].formatted_address, position: position})
+              callback(parseGeocodeResults(results[1]));
             }
           }
         });
       });
     }
-    
   };
 });
