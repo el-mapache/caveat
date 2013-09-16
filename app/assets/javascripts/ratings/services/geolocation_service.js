@@ -18,34 +18,43 @@ angular.module("geolocationService", []).service("geolocationService", function(
   }
   
   return {
+    // Current lat/lng coordinates the main viewport is showing
+    currentPosition: null,
+    
     isSupported: function() {
       return supported;
     },
     
-    currentPostion: null,
+    updateCurrentPosition: function(coords) {
+      this.currentPosition = coords;
+    }, 
 
-    getPosition: function(onSuccess, onError) {
+    geocode: function(onSuccess, onError) { 
       var self = this;
+           
       navigator.geolocation.getCurrentPosition(function(position) {
-        self.currentPosition = position.coords;
-        onSuccess(position);
+        self.updateCurrentPosition(position.coords);
+        onSuccess();
       }, function(error) {
           if (typeof onError === "function") onError(error);
       });
     },
     
     reverseGeocode: function(callback) {
-      var geocoder = new google.maps.Geocoder();
+      var geocoder = new google.maps.Geocoder(),
+          self = this;
       
-      this.getPosition(function(position) {
-        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      this.geocode(function() {
+        var latlng = new google.maps.LatLng(self.currentPosition.latitude, self.currentPosition.longitude);
 
         geocoder.geocode({'latLng': latlng}, function(results, status) {
           if (status === google.maps.GeocoderStatus.OK) {
-            if (results[1]) {
-              callback(parseGeocodeResults(results[1]));
+            if (results[0]) {
+              callback(parseGeocodeResults(results[0]));
             }
           }
+        }, function(error) {
+          callback(error);
         });
       });
     }

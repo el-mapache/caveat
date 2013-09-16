@@ -20,6 +20,11 @@ angular.module("Pin",['InfoWindow']).factory("Pin", function($compile, InfoWindo
       this.active = true;
     }
   };
+  
+  Pin.prototype.remove = function() {
+    google.maps.event.clearInstanceListeners(this);
+    this.setMap(null);
+  };
 
   // This might not even be used anymore
   Pin.prototype.removeWindow = function() {

@@ -27,12 +27,26 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
     replace: false,
     transclude: true,
     scope: true,
-    controller: function($scope, $compile, broadcastService) {
+    controller: function($scope, $compile, $rootScope, broadcastService) {
       $scope.currentMarker = null;
       $scope.businesses = null;
       $scope.markers = [];
-
+      
+      $rootScope.$on("BusinessSearch", function(evt, data) {
+        $scope.setUpMarkers(data);
+      });
+      
+      $scope.clearMarkers = function() {
+        angular.forEach($scope.markers, function(marker) {
+          marker.remove();
+        });
+        $scope.markers.length = 0;
+      };
+      
       $scope.setUpMarkers = function(data) {
+        // Free existing markers from memory
+        $scope.clearMarkers();
+
         $scope.move(17);
         $scope.businesses = data;
 
@@ -90,8 +104,8 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
           // Remove the child controller scope from angular
 				 	broadcastService.broadcast("DestroyContentWindow");
 				 	
-				 	// If the user clicked on the currently selected marker, we obviously
-				 	// don't want to reload the template.
+				 	// If the user clicked on the currently selected marker,
+				 	// we don't want to reload the template.
 					if ($scope.currentMarker === this) {
             $scope.currentMarker = null;
 

@@ -4,11 +4,11 @@
       %th.score SCORE
       %th.violations-count VIOLATIONS COUNT
       %th.date DATE
-%div{"accordion" =>"", "ng-transclude" => ""}
-  .accordion{"ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
-    %table.table.business-table.accordion-group{"is-open" => "'false'", "ng-show" =>"i.violations.length"}
+%accordion{"close-others" => 'true', "ng-transclude" => ""}
+  %accordion-group{"ng-class" => "{test: isOpen}", "ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
+    %table.table.business-table{"ng-show" =>"i.violations.length", "ng-click" => "isOpen = !isOpen"}
       %tbody
-        %tr.accordion-toggle{"ng-click" => "isOpen = !isOpen", "ng-class" => "{active: isOpen}"}
+        %tr{"ng-class" => "{active: isOpen}"}
           %td.score.bordered 
             %h3
               {{ i.inspection.inspection.score }}
@@ -16,7 +16,7 @@
             {{ i.violations_count }}
           %td.date 
             {{ i.inspection.formatted_date }}
-    .accordion-body{"collapse" => "!isOpen"}
+    %div{"collapse" => "!isOpen"}
       %table.table.violations-table
         %thead
           %tr.ratings-black-bg.ratings-white

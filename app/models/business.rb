@@ -35,7 +35,11 @@ class Business < ActiveRecord::Base
     #
     # @param id: Id of the business
     def with_associations(id)
-      includes(:violations, :inspections).find(id)
+      if id.match(/[0-9]+/)
+        includes(:violations, :inspections).find(id)
+      else
+        includes(:violations, :inspections).where("name LIKE ?", "%#{id}%")
+      end
     end
   end
 

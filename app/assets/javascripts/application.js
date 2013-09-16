@@ -4,5 +4,4 @@
 //= require angular-ui-bootstrap
 //= require_tree ./ratings
 //= require templates
-//= require modal
 

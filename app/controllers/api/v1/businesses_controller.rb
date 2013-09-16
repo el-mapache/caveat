@@ -1,5 +1,9 @@
 class API::V1::BusinessesController < ApplicationController
   def index    
+    if params[:name] == "all"
+      render json: Business.select("businesses.name").find(:all) and return
+    end
+      
     cache = $redis.get(params[:address])
     
     if cache
@@ -13,7 +17,17 @@ class API::V1::BusinessesController < ApplicationController
   end
 
   def show
-    @business = Business.with_associations(params[:id])
-    render json: API::V1::BusinessPresenter.present(@business) 
+    name = params[:id].to_s.strip
+
+    cache = $redis.get(name)
+    
+    if cache
+      @business = JSON.parse(cache)
+    else
+      @business = API::V1::BusinessPresenter.present(Business.with_associations(name))
+    end
+    
+    render json: @business
   end
+  
 end
