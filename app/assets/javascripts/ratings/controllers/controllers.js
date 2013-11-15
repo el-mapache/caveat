@@ -111,8 +111,6 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
 
 app.controller("AccordionCtrl", function($scope) {
   $scope.oneAtATime = true;
-  
-  
 });
 
 app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestService, broadcastService) {
@@ -124,7 +122,7 @@ app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestServ
     error: false,
     message: ""
   };
-  
+
   RequestService.get("businesses", {name: "all"}).success(function(response) {
     if (response && response.length !== 0) {
       for (var i = 0, l = response.length; i < l; i++) {
@@ -135,16 +133,16 @@ app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestServ
 
   $scope.search = function() {
     var request = RequestService.get("businesses/" + $scope.business, {})
-                  
+
     request.success(function(response, status) {
       if (response.length > 0) {
         var business = response[0];
-        
+
         geolocationService.updateCurrentPosition({
           latitude: business.business.latitude,
           longitude: business.business.longitude
         });
-        
+
         broadcastService.broadcast("BusinessSearch", [business]);
       } else {
         $scope.hasError = {

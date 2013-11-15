@@ -97,6 +97,7 @@ angular.module("google-map", ['broadcastService', 'geolocationService','Pin', 'f
       };
 
       $scope.setCurrentWindow = function() {
+        debugger;
         if ($scope.currentMarker) {          
           // Remove the info window from the DOM/Google map
           $scope.currentMarker.toggleInfoWindow();

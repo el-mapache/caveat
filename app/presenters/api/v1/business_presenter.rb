@@ -4,21 +4,29 @@ class API::V1::BusinessPresenter
       businesses = obj.kind_of?(ActiveRecord::Relation) ? obj : [obj]
       as_hash(businesses)
     end
-    
+
     private
     def as_hash(businesses)
       businesses.map do |b|
         {
           business: b,
           inspections_violations: inspections_violations(b),
-          most_recent_score: b.inspections.first.score,
+          most_recent_score: most_recent(b.inspections),
           average_score: average(b.inspections)
         }
       end
     end
 
+    # An active record call returns an empty array when no results are found.
+    # Return 0 if a business hasn't recieved any inspections.
     def average(inspections)
+      return 0 if inspections.empty?
       inspections.inject(0) { |sum, i| sum + i.score } / inspections.length
+    end
+
+    def most_recent(inspections)
+      return 0 if inspections.empty?
+      inspections.first.score
     end
 
     def inspections_violations(business)
