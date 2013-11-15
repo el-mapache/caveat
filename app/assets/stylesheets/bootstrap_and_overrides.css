@@ -118,7 +118,6 @@ img[src*="iws3.png"] {
 .info-window {
   border: 0px none;
   padding: 10px;
-  display: none;
   box-shadow: 0px 0px 4px #080B0C;
   height: auto;
   width: 220px;

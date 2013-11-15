@@ -43,7 +43,6 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
   // Dynmically assign the wrapper once the inner div's contents have been filled in
   
   InfoBox.prototype._resizeWindowWrapper = function(evt, marker) {
-    window.a = this;
     var wrapper = this._div;
 
     wrapper.style.height = this._div.querySelector(".info-window").clientHeight +"px";
@@ -191,3 +190,4 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
 
   return InfoBox;
 });
+
