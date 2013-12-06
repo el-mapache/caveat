@@ -7,7 +7,7 @@ angular.module("google-map",
    'fileLoader',
    'cWindow'
   ]
-).directive("googleMap", function($compile, $http, broadcastService, geolocationService, requestService, Pin, fileLoader) {
+).directive("googleMap", function($compile, $http, broadcastService, geolocationService, RequestService, Pin, fileLoader) {
 
   // Map defaults
   var _defaults = {
@@ -156,7 +156,6 @@ angular.module("google-map",
       } else {
         options = _defaults;
       }
-      var clickee = false 
 
       google.maps.event.addDomListener(window, 'load', function() {
         scope.map = drawMap(element[0], options, styledMap);
@@ -167,13 +166,17 @@ angular.module("google-map",
             latitude: center.lat() + "",
             longitude: center.lng() +""
           };
+
           geolocationService.updateCurrentPosition(coords);
-          console.log(geolocationService.currentPosition)
-          requestService.get("businesses", {
-            lat: coords.latitude,
-            lng: coords.lng
+          geolocationService.reverseGeocode(function(response) {
+            request = RequestService.get("businesses", {
+              lat: response.position.coords.latitude,
+              lng: response.position.coords.longitude,
+              address: response.address
+            });
+
+            request.success(function() {console.log(arguments) })
           });
-          request.success(function() {console.log(arguments) })
         });
       });
 
