@@ -83,17 +83,17 @@ app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broa
 
 app.controller("BusinessCtrl", function($scope, broadcastService) {
   $scope.showBusiness = false;
-  
+
   $scope.hideSidebar = function() {
     broadcastService.broadcast("HideSidebar", $scope.businessObj);
     $scope.toggleBusinessWindow();
   }
-  
+
   // Hides or shows the business sidebar
   $scope.toggleBusinessWindow = function() {
     $scope.showBusiness = !$scope.showBusiness;
   };
-  
+
   $scope.$on("HideBusiness", function(evt) {
     $scope.toggleBusinessWindow();
     $scope.$apply();
