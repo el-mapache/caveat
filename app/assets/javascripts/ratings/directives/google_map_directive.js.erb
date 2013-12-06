@@ -61,7 +61,7 @@ angular.module("google-map",
       $scope.setUpMarkers = function(data) {
         // Free existing markers from memory
         $scope.clearMarkers();
-
+        console.log(data)
         $scope.move(17);
         $scope.businesses = data;
 
@@ -164,19 +164,21 @@ angular.module("google-map",
           var center = scope.map.getCenter();
           var coords = {
             latitude: center.lat() + "",
-            longitude: center.lng() +""
+            longitude: center.lng() + ""
           };
 
+          console.log(coords)
           geolocationService.updateCurrentPosition(coords);
-          geolocationService.reverseGeocode(function(response) {
-            request = RequestService.get("businesses", {
-              lat: response.position.coords.latitude,
-              lng: response.position.coords.longitude,
-              address: response.address
-            });
+          //var geocoder = new google.maps.Geocoder()
 
-            request.success(function() {console.log(arguments) })
+          //var latlng = new google.maps.LatLng(coords.latitude, coords.longitude);
+          request = RequestService.get("businesses", {
+            lat: coords.latitude,
+            lng: coords.longitude,
+            address: ""//response.address
           });
+
+          request.success(function(data) { scope.setUpMarkers(data)})
         });
       });
 
