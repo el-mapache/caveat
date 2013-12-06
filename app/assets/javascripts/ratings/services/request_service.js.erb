@@ -1,0 +1,47 @@
+/*
+ * This service queries the server's API for businesses near the user
+ * It exposes a single public method, 'get'
+ *
+ * @return promise
+*/
+angular.module("RequestService", []).service("RequestService", ["$http", function($http) {
+  var root = "http://localhost:<%= Rails::Server.new.options[:Port] %>/api/v1/";
+
+  function makeQueryParameterString(params) {
+    if (typeof params !== "object") return false;
+
+    var paramaterString = "",
+        parameter,
+        prefix;
+
+    angular.forEach(params, function(value,key) {
+      // If this is the first parameter, prefix with a '?',
+      // otherwise use '&'
+      prefix = !paramaterString ? "?" : "&";
+
+      paramaterString += [prefix, key, "=", value].join('');
+    });
+
+    return paramaterString;
+  }
+
+  return {
+    /*
+     * Get businesses from the rails server.
+     * @param {url}    String The desired API endpoint.
+     * @param {params} Object Key/Vale pairs to be sent as a query string
+     *
+     * @return Promise
+     *
+    */
+    get: function(url, params) {
+      var queryParams = makeQueryParameterString(params);
+
+      return $http({
+        method: "GET",
+        data: params,
+        url: root + url + queryParams
+      });
+    }
+  };
+}]);

@@ -22,12 +22,12 @@ app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broa
       speaker = broadcastService;
 
   $scope.active = geo.isSupported() ? true : false;
-  
+
   $scope.error = {
     hasError: false,
     message: ""
   };
-  
+
   $scope.toggleActive = function() {
     return $scope.active = !$scope.active;
   }
@@ -58,7 +58,9 @@ app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broa
       radius: 15,
     }).spin(document.getElementById("locate"));
   };
-  
+
+  // Find businesses near the user based on inital
+  // geolocation request
   $scope._getBusinesses = function(response) {
     var request = RequestService.get("businesses", {
       lat: response.position.coords.latitude,
