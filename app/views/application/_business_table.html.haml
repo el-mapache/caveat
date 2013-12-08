@@ -5,7 +5,7 @@
       %th.violations-count VIOLATIONS COUNT
       %th.date DATE
 %accordion{"close-others" => 'true', "ng-transclude" => ""}
-  %accordion-group{"ng-class" => "{test: isOpen}", "ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
+  %accordion-group{"ng-repeat" => "i in businessObj.inspections_violations | simpleSort"}
     %table.table.business-table{"ng-show" =>"i.violations.length", "ng-click" => "isOpen = !isOpen"}
       %tbody
         %tr{"ng-class" => "{active: isOpen}"}

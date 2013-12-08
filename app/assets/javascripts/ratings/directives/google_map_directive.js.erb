@@ -1,13 +1,13 @@
 angular.module("google-map",
   [
-   'broadcastService',
-   'geolocationService',
+   'BroadcastService',
+   'GeolocationService',
    'RequestService',
    'Pin',
    'fileLoader',
    'cWindow'
   ]
-).directive("googleMap", function($compile, $http, broadcastService, geolocationService, RequestService, Pin, fileLoader) {
+).directive("googleMap", function($compile, $http, BroadcastService, GeolocationService, RequestService, Pin, fileLoader) {
 
   // Map defaults
   var _defaults = {
@@ -42,7 +42,7 @@ angular.module("google-map",
     replace: false,
     transclude: true,
     scope: true,
-    controller: function($scope, $compile, $rootScope, broadcastService) {
+    controller: function($scope, $compile, $rootScope, BroadcastService) {
       $scope.currentMarker = null;
       $scope.businesses = null;
       $scope.markers = [];
@@ -60,7 +60,7 @@ angular.module("google-map",
       
       $scope.setUpMarkers = function(data) {
         // Free existing markers from memory
-        $scope.clearMarkers();
+        //$scope.clearMarkers();
         console.log(data)
         $scope.move(17);
         $scope.businesses = data;
@@ -86,8 +86,8 @@ angular.module("google-map",
        * @param {zoom} Integer Zoom the map to the desired level
       */
       $scope.move = function(zoom) {
-        var lat = geolocationService.currentPosition.latitude,
-            lng = geolocationService.currentPosition.longitude
+        var lat = GeolocationService.currentPosition.latitude,
+            lng = GeolocationService.currentPosition.longitude
 
         $scope.map.panTo(new google.maps.LatLng(lat, lng));
         
@@ -115,13 +115,13 @@ angular.module("google-map",
         if ($scope.currentMarker) {          
           // Remove the info window from the DOM/Google map
           $scope.currentMarker.toggleInfoWindow();
-          
+
           // Remove the child controller scope from angular
-				 	broadcastService.broadcast("DestroyContentWindow");
-				 	
-				 	// If the user clicked on the currently selected marker,
-				 	// we don't want to reload the template.
-					if ($scope.currentMarker === this) {
+          BroadcastService.broadcast("DestroyContentWindow");
+
+          // If the user clicked on the currently selected marker,
+          // we don't want to reload the template.
+          if ($scope.currentMarker === this) {
             $scope.currentMarker = null;
 
             return false;
@@ -129,11 +129,11 @@ angular.module("google-map",
 
           $scope.currentMarker = null;
         }
-        
+
         $scope.map.panTo(this.getPosition());
         var template = $compile('<div content-window business-index="' + this.index + '" business-name="'+this.data.businessName +'" score="'+this.data.score+'"></div>')($scope);
        	this.toggleInfoWindow(template)
-       	
+
         $scope.currentMarker = this;
       };
     },
@@ -168,7 +168,7 @@ angular.module("google-map",
           };
 
           console.log(coords)
-          geolocationService.updateCurrentPosition(coords);
+          GeolocationService.updateCurrentPosition(coords);
           //var geocoder = new google.maps.Geocoder()
 
           //var latlng = new google.maps.LatLng(coords.latitude, coords.longitude);

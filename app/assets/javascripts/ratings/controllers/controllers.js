@@ -1,32 +1,53 @@
-var app = angular.module("ratings",['ui.bootstrap', 'templates', 'geolocationService','broadcastService','RequestService','google-map','simple-sort']);
+var app = angular.module("ratings",
+  [
+   'ui.bootstrap',
+   'templates',
+   'GeolocationService',
+   'BroadcastService',
+   'RequestService',
+   'google-map',
+   'simple-sort'
+  ]
+);
+
 // This controller simply provides a wrapper for the bootstrap dialog
 // directive.
 app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
-  $scope.opts = {
+  $scope.options = {
     backdrop: true,
     keyboard: false,
     backdropClick: false,
     template: $templateCache.get("modal.html"),
     dialogClass: "modal",
     backdropFade: true,
-    controller: "_ContentCtrl"
+    controller: "_DialogContentCtrl"
   };
   
-  $dialog.dialog($scope.opts).open();
+  $dialog.dialog($scope.options).open();
 });
 
 // dialog directive is injected into this controller
-app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broadcastService, RequestService) {
-  // Aliased so I dont have to type so damn much
-  var geo = geolocationService,
-      speaker = broadcastService;
+app.controller("_DialogContentCtrl", function($scope, dialog, GeolocationService, BroadcastService, RequestService) {
 
-  $scope.active = geo.isSupported() ? true : false;
+  // Determine if geolocation is available in the users browser.
+  // TODO: Possibly ignore this and just show 20 or so businesses in the center 
+  // of San Francisco? 
+  // Maybe if geolocation is unavailable or the user isnt in san francisco, just show the center
+  // rather than breaking the whole app
+  if (!GeolocationService.isSupported()) { 
+    $scope.active = false;
+    $scope.error = {
+      hasError: true,
+      message: "Geolocation is not supported in your browser."
+    };
+  } else {
+    $scope.active = true
 
-  $scope.error = {
-    hasError: false,
-    message: ""
-  };
+    $scope.error = {
+      hasError: false,
+      message: ""
+    };
+  }
 
   $scope.toggleActive = function() {
     return $scope.active = !$scope.active;
@@ -35,19 +56,7 @@ app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broa
   $scope.locate = function() {
     $scope._showSpinner();
     $scope.toggleActive();
-    geo.reverseGeocode(function(response) {
-      // Since this callback is executed in a different scope
-      // it has to be wrapped in an angular apply to update the DOM
-      $scope.$apply(function() {
-        if (response.toString().match(/Error/)) {
-          $scope.error.hasError = true;
-          $scope.error.message = response.message + ".";
-          $scope.toggleActive();
-        } else {
-          $scope._getBusinesses(response);
-        }
-      });
-    });
+    GeolocationService.getCurrentPosition($scope.getBusinesses);
   };
 
   $scope._showSpinner = function() {
@@ -59,33 +68,37 @@ app.controller("_ContentCtrl", function($scope, dialog, geolocationService, broa
     }).spin(document.getElementById("locate"));
   };
 
-  // Find businesses near the user based on inital
-  // geolocation request
-  $scope._getBusinesses = function(response) {
+  /* Query the server for businesses near the supplied coordinates.
+   *
+   * @param {coords} Object The latitude and longitude to search within.
+  */
+  $scope.getBusinesses = function(coords) {
     var request = RequestService.get("businesses", {
-      lat: response.position.coords.latitude,
-      lng: response.position.coords.longitude,
-      address: response.address
+      lat: coords.latitude,
+      lng: coords.longitude
     });
+
+    // Promise callbacks will never be executed without an $apply here
+    $scope.$apply()
 
     request.success(function(data, status, headers, config) {
       dialog.close();
-      speaker.broadcast("closeModal", data);
+      BroadcastService.broadcast("closeModal", data);
     }).error(function(data, status) {
       $scope.error = {
         hasError: true,
-        message: "Something has gone horribly wrong."
+        message: "Something has gone horribly wrong. Contact the developer at once!"
       };
       $scope.toggleActive();
     });
   };
 });
 
-app.controller("BusinessCtrl", function($scope, broadcastService) {
+app.controller("BusinessCtrl", function($scope, BroadcastService) {
   $scope.showBusiness = false;
 
   $scope.hideSidebar = function() {
-    broadcastService.broadcast("HideSidebar", $scope.businessObj);
+    BroadcastService.broadcast("HideSidebar", $scope.businessObj);
     $scope.toggleBusinessWindow();
   }
 
@@ -104,20 +117,20 @@ app.controller("BusinessCtrl", function($scope, broadcastService) {
     $scope.businessObj = businessObj;
     $scope.average = $scope.businessObj.average_score;
 
-    if (!$scope.showBusiness) 
-      $scope.toggleBusinessWindow();
-    
+    if (!$scope.showBusiness) $scope.toggleBusinessWindow();
+
     $scope.$apply();
   });  
 });
 
+// Controlls angular bootstrap accordion behavior.
 app.controller("AccordionCtrl", function($scope) {
+
+  // Tells the bootstrap accordion to show only a single open fold.
   $scope.oneAtATime = true;
 });
 
-app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestService, broadcastService) {
-  var geo = geolocationService;
-
+app.controller("TypeaheadCtrl", function($scope, GeolocationService, RequestService, BroadcastService) {
   $scope.business = "";
   $scope.businesses = [];
   $scope.hasError = {
@@ -133,6 +146,7 @@ app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestServ
     }
   });
 
+  // TODO encodeURIComponent -> business name, then decode on server
   $scope.search = function() {
     var request = RequestService.get("businesses/" + $scope.business, {})
 
@@ -140,16 +154,16 @@ app.controller("TypeaheadCtrl", function($scope, geolocationService, RequestServ
       if (response.length > 0) {
         var business = response[0];
 
-        geolocationService.updateCurrentPosition({
+        GeolocationService.updateCurrentPosition({
           latitude: business.business.latitude,
           longitude: business.business.longitude
         });
 
-        broadcastService.broadcast("BusinessSearch", [business]);
+        BroadcastService.broadcast("BusinessSearch", [business]);
       } else {
         $scope.hasError = {
           error: true,
-          message: "We weren't able to locate that establishment. Maybe the rats got their first...."
+          message: "We weren't able to locate that establishment. Maybe the rats got there first...."
         };
       }
     });

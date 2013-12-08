@@ -1,5 +1,5 @@
 class API::V1::BusinessesController < ApplicationController
-  def index    
+  def index
     if params[:name] == "all"
       render json: Business.select("businesses.name").find(:all) and return
     end
@@ -9,10 +9,10 @@ class API::V1::BusinessesController < ApplicationController
     #if cache
      # @businesses = JSON.parse(cache)
    # else
-      @businesses = API::V1::BusinessPresenter.present(Business.all_with_associations([params[:lat], params[:lng]]))
      # $redis.setex(params[:address], 172800, @businesses.to_json)
     #end
 
+    @businesses = API::V1::BusinessPresenter.present(Business.all_with_associations([params[:lat], params[:lng]]))
     render json: @businesses
   end
 
@@ -20,14 +20,13 @@ class API::V1::BusinessesController < ApplicationController
     name = params[:id].to_s.strip
 
     cache = $redis.get(name)
-    
+
     if cache
       @business = JSON.parse(cache)
     else
       @business = API::V1::BusinessPresenter.present(Business.with_associations(name))
     end
-    
+
     render json: @business
   end
-  
 end

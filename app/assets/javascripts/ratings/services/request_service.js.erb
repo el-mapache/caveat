@@ -2,7 +2,6 @@
  * This service queries the server's API for businesses near the user
  * It exposes a single public method, 'get'
  *
- * @return promise
 */
 angular.module("RequestService", []).service("RequestService", ["$http", function($http) {
   var root = "http://localhost:<%= Rails::Server.new.options[:Port] %>/api/v1/";

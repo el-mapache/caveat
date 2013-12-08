@@ -1,4 +1,8 @@
-angular.module("cWindow",["broadcastService"]).directive("contentWindow", function($compile, broadcastService, $rootScope) {
+angular.module("cWindow",
+  [
+    "BroadcastService"
+  ]
+).directive("contentWindow", function($compile, BroadcastService, $rootScope) {
   function scoreToRats(score) {
     return score >= 90 ? 0 :
            score >= 79 && score <= 89 ? 1 :
@@ -20,8 +24,8 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
     return ratImgString;
   }
   
-  // Template annoyingly in the function as templateUrl doesnt load fast enough 
-  // to handle dynamic content
+  // Template placed annoyingly dirrectly in the function. 
+  // Built in templateUrl doesnt load fast enough to handle dynamic content.
   return {
     restrict: "EA",
     replace: true,
@@ -29,29 +33,29 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
     scope: true,
 		compile: function(element, attrs) {
 			var scoreAsRats = scoreToRats(parseInt(attrs.score));
-			
-      if (scoreAsRats > 0) 
+
+      if (scoreAsRats > 0)
         element.find(".rat-icons").html(ratImgString(scoreAsRats));
 
       return {
-      	pre: function() {},
-      	post: function(scope, element, attrs) {
-      	  scope.activeBusiness = false;
-					scope.businessName = attrs.businessName;
-	        scope.violations = scoreAsRats === 0 ? false : true;
-					scope.businessIndex = attrs.businessIndex;
-      	  
-	        scope.seeBusiness = function(evt, business) {
-						if (scope.activeBusiness) {
-							broadcastService.broadcast("HideBusiness");
-						  return scope.toggleBusiness();
-						}
-						
-	          broadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
-	        
-						scope.toggleBusiness();
+        pre: function() {},
+        post: function(scope, element, attrs) {
+          scope.activeBusiness = false;
+          scope.businessName = attrs.businessName;
+          scope.violations = scoreAsRats === 0 ? false : true;
+          scope.businessIndex = attrs.businessIndex;
+
+          scope.seeBusiness = function(evt, business) {
+            if (scope.activeBusiness) {
+              BroadcastService.broadcast("HideBusiness");
+              return scope.toggleBusiness();
+            }
+
+            BroadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
+
+            scope.toggleBusiness();
 	        };
-					
+
 					// TODO this is a hack but I cant seem to get everything scoped
 					// correctly any other way.
 	        scope.$apply(function() {
@@ -67,7 +71,7 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 	                });
 	               }
 	            },25);
-						}
+            }
 	        });
 				  
 				  scope.toggleBusiness = function() {
@@ -76,7 +80,7 @@ angular.module("cWindow",["broadcastService"]).directive("contentWindow", functi
 				  
 					scope.$on("$destroy", function() {
 						if (scope.activeBusiness) {
-						  broadcastService.broadcast("HideBusiness");
+						  BroadcastService.broadcast("HideBusiness");
 					  }
 					  
 						$(".ratings-link").off();

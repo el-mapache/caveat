@@ -1,4 +1,4 @@
-angular.module("broadcastService",[]).service("broadcastService", function($rootScope) {
+angular.module("BroadcastService",[]).service("BroadcastService", function($rootScope) {
   return {
     broadcast: function(eventName, data) {
       $rootScope.$broadcast(eventName, data);
