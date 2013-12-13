@@ -4,7 +4,12 @@ angular.module("cWindow",
   ]
 ).directive("contentWindow", function($compile, BroadcastService, $rootScope) {
   function scoreToRats(score) {
-    return score >= 90 ? 0 :
+    /*
+     * Occasionally businesses have no score. This is currently being represented
+     * as zero rats, but perhaps a string of no inspection data or something
+     * similar would be bettter?
+    */
+    return score >= 90 || score == 0 ? 0 :
            score >= 79 && score <= 89 ? 1 :
            score < 79 && score >=69 ? 2 :
            score < 69 && score >= 59 ? 3 : 4;
@@ -16,15 +21,15 @@ angular.module("cWindow",
     for (var i = 0; i < numRats; i++) {
       ratImgString += '<img src="<%= asset_path("cute_rat.svg")%>" height="30" width="30">';
     }
-    
+
     for(var i = 0; i < 4 - numRats; i++) {
       ratImgString += "<img src=\"<%=asset_path('cute_rat_empty.svg') %>\" height='30' width='30'>";
     }
 
     return ratImgString;
   }
-  
-  // Template placed annoyingly dirrectly in the function. 
+
+  // Template placed annoyingly directly in the function. 
   // Built in templateUrl doesnt load fast enough to handle dynamic content.
   return {
     restrict: "EA",
@@ -34,8 +39,9 @@ angular.module("cWindow",
 		compile: function(element, attrs) {
 			var scoreAsRats = scoreToRats(parseInt(attrs.score));
 
-      if (scoreAsRats > 0)
+      if (scoreAsRats > 0) {
         element.find(".rat-icons").html(ratImgString(scoreAsRats));
+      }
 
       return {
         pre: function() {},

@@ -4,10 +4,10 @@ angular.module("google-map",
    'GeolocationService',
    'RequestService',
    'Pin',
-   'fileLoader',
+   'FileLoader',
    'cWindow'
   ]
-).directive("googleMap", function($compile, $http, BroadcastService, GeolocationService, RequestService, Pin, fileLoader) {
+).directive("googleMap", function($compile, $http, BroadcastService, GeolocationService, RequestService, Pin, FileLoader) {
 
   // Map defaults
   var _defaults = {
@@ -16,7 +16,8 @@ angular.module("google-map",
     mapTypeId: 'road'
   };
   
-  /* Creates either a new styled map from a hash of options
+  /*
+   * Creates either a new styled map from a hash of options,
    * or a prestyled Stamen map.
    *
   */
@@ -34,7 +35,7 @@ angular.module("google-map",
     }
     return map;
   }
-  
+
   return {
     priority: 100,
     restrict: 'EA',
@@ -44,75 +45,105 @@ angular.module("google-map",
     scope: true,
     controller: function($scope, $compile, $rootScope, BroadcastService) {
       $scope.currentMarker = null;
-      $scope.businesses = null;
+      $scope.businesses = [];
       $scope.markers = [];
-      
+
       $rootScope.$on("BusinessSearch", function(evt, data) {
         $scope.setUpMarkers(data);
       });
-      
+
       $scope.clearMarkers = function() {
         angular.forEach($scope.markers, function(marker) {
           marker.remove();
         });
         $scope.markers.length = 0;
       };
-      
-      $scope.setUpMarkers = function(data) {
-        // Free existing markers from memory
-        //$scope.clearMarkers();
-        console.log(data)
-        $scope.move(17);
-        $scope.businesses = data;
 
-        angular.forEach(data, function(businessObj, index) {
-          var business = businessObj.business,
-							data = { 
-								businessName: business.name, 
-								score: businessObj.most_recent_score,
-								index: index 
-							};
-		
-          $scope.addMarker(business.latitude, business.longitude, data, index);
-        }); 
+      $scope.setUpMarkers = function(data) {
+        // First, check the length of our businesses array
+        var list = $scope.businesses;
+        if (list >= 70) {
+          // We have a bunch of business so clear them out
+          list.length = 0;
+          $scope.clearMarkers();
+        } else {
+          // We havent hit our (arbitrary) limit, so add the new businesses
+          var offset = list.length
+              itr = 0,
+              dataLen = data.length;
+
+          for (itr; itr < dataLen; ++itr) {
+            if (offset !== 0 &&
+                list[itr].business.id == data[itr].business.id) continue;
+
+            list[offset + itr] = data[itr];
+
+            var business = data[itr].business;
+            var metadata = {
+              businessName: business.name,
+              score: data[itr].most_recent_score,
+              index: offset + itr
+            };
+
+            $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
+          }
+        }
+        // Free existing markers from memory
+        console.log(data)
+        $scope.move();
+       // angular.forEach(data, function(businessObj, index) {
+       //   var business = businessObj.business,
+       //       data = {
+       //         businessName: business.name,
+       //         score: businessObj.most_recent_score,
+       //         index: index
+       //       };
+
+       //   $scope.addMarker(business.latitude, business.longitude, data, index);
+       // });
       };
-      
-			// Force a re-draw of the google map
+
+      // Force a re-draw of the google map
       $scope.refresh = function() {
         google.maps.event.trigger($scope.map, "resize");
       };
 
-      /* Moves to the position returned by the location, service
+      /*
+       * Moves to the position returned by the location, service
        * @param {zoom} Integer Zoom the map to the desired level
-      */
+       */
       $scope.move = function(zoom) {
         var lat = GeolocationService.currentPosition.latitude,
             lng = GeolocationService.currentPosition.longitude
 
         $scope.map.panTo(new google.maps.LatLng(lat, lng));
-        
+
         // Zoom in the map if a new zoom was specified.
-				if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
+        if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
       };
 
       $scope.addMarker = function(lat, lng, data, index) {
-        var location = new google.maps.LatLng(lat, lng),
-            marker = new Pin({
-              map: $scope.map,
-              draggable: false,
-              animation: google.maps.Animation.DROP,
-              icon: "<%= asset_path('black_marker.svg') %>",
-              position: location,
-              enableEventPropagation: true
-            }, data, index);
+        // Coords of the business' marker
+        var location = new google.maps.LatLng(lat, lng);
+
+        // Create a new marker object
+        var marker = new Pin({
+          map: $scope.map,
+          draggable: false,
+          animation: google.maps.Animation.DROP,
+          icon: "<%= asset_path('black_marker.svg') %>",
+          position: location,
+          enableEventPropagation: true
+        }, data, index);
 
         google.maps.event.addDomListener(marker, 'click', $scope.setCurrentWindow);
 
+        // Add the marker to the map directive's list of markers
         $scope.markers.push(marker);
       };
 
       $scope.setCurrentWindow = function() {
-        if ($scope.currentMarker) {          
+        if ($scope.currentMarker) {
           // Remove the info window from the DOM/Google map
           $scope.currentMarker.toggleInfoWindow();
 
@@ -143,12 +174,12 @@ angular.module("google-map",
           options = null;
 
       if (attrs.stylers) {
-        fileLoader.load(attrs.stylers).success(function(data, status) {
+        FileLoader.load(attrs.stylers).success(function(data, status) {
           styledMap = new google.maps.StyledMapType(data.stylers, {name: "Styled Map"});
         });
+      } else if (attrs.stamentype) {
+        styledMap = attrs.stamentype;
       }
-
-      if (attrs.stamentype) styledMap = attrs.stamentype;
 
       if (attrs.options) {
         // Extend the defaults with the passed in data options, interpereted as json
@@ -167,27 +198,28 @@ angular.module("google-map",
             longitude: center.lng() + ""
           };
 
-          console.log(coords)
           GeolocationService.updateCurrentPosition(coords);
-          //var geocoder = new google.maps.Geocoder()
 
-          //var latlng = new google.maps.LatLng(coords.latitude, coords.longitude);
           request = RequestService.get("businesses", {
             lat: coords.latitude,
-            lng: coords.longitude,
-            address: ""//response.address
+            lng: coords.longitude
           });
 
-          request.success(function(data) { scope.setUpMarkers(data)})
+          scope.$apply();
+ 
+          request.success(function(data) {
+            scope.setUpMarkers(data);
+          });
         });
       });
-
 
       // This function kicks off the initial marker load event
       scope.$on("closeModal", function(evt, data) {
         element.removeClass("sepia-blur");
+        scope.move(18);
         scope.setUpMarkers(data);
       });
     }
   };
 });
+

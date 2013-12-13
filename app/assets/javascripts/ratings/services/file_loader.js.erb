@@ -1,8 +1,9 @@
-/* Service to asynchronously load files
+/* Service to asynchronously load files.
+ * Exposes a single public function, #load
  * @param {file} String name of a file
  * @return promise
 */
-angular.module("fileLoader", []).service("fileLoader", ["$http", function($http) {
+angular.module("FileLoader", []).service("FileLoader", ["$http", function($http) {
   return {
     load: function(file) {
       return $http({
