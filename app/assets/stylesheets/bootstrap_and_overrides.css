@@ -9,7 +9,9 @@ body, html {
   height: 100%;
   background: #3a3939;
 }
-
+button {
+  outline: none;
+}
 body {
   line-height: inherit;
   -webkit-font-smoothing: antialiased;
@@ -37,6 +39,7 @@ body {
 }
 
 #map-canvas { 
+  display: block;
   height: 100%; 
   width: 100%;
 }
