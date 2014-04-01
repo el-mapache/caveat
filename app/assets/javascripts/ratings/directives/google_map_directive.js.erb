@@ -7,7 +7,7 @@ angular.module("google-map",
    'FileLoader',
    'cWindow'
   ]
-).directive("googleMap", function($compile, $http, BroadcastService, GeolocationService, RequestService, Pin, FileLoader) {
+).directive("googleMap", function($compile, BroadcastService, GeolocationService, RequestService, Pin, FileLoader) {
 
   // Map defaults
   var _defaults = {
@@ -64,35 +64,42 @@ angular.module("google-map",
         // First, check the length of our businesses array
         var list = $scope.businesses;
 
-        if (list.length >= 200) {
-          // We have a bunch of business so clear them out
-          list.length = 0;
-          $scope.clearMarkers();
-          $scope.existingMarkerList = {};
-        }
+//        if (list.length >= 200) {
+ //         // We have a bunch of business so clear them out
+  //        list.length = 0;
+   //       $scope.clearMarkers();
+     //     $scope.existingMarkerList = {};
+   //     }
 
         // We havent hit our (arbitrary) limit, so add the new businesses
         var offset = list.length
             itr = 0,
             dataLen = data.length;
 
-        for (itr; itr < dataLen; ++itr) {
-          //if ($scope.existingMarkerList[data[itr].business.id]) continue;
+        angular.forEach(data, function(business) {
+          var b = business.business;
+          $scope.addMarker(b.latitude, b.longitude, {businessName: b.name, score: business.most_recent_score}, offset + itr);
+          itr++;
+        });
 
-          list[offset + itr] = data[itr];
+        $scope.refresh();
 
-          var business = data[itr].business;
+        //for (itr; itr < dataLen; itr++) {
+        //  //if ($scope.existingMarkerList[data[itr].business.id]) continue;
 
-          var metadata = {
-            businessName: business.name,
-            score: data[itr].most_recent_score,
-            index: offset + itr
-          };
+        //  //list[offset + itr] = data[itr];
 
-          //$scope.existingMarkerList[data[itr].business.id] = true;
+        //  var business = data[itr].business;
 
-          $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
-        }
+        //  var metadata = {
+        //    businessName: business.name,
+        //    score: data[itr].most_recent_score
+        //  };
+
+        //  //$scope.existingMarkerList[data[itr].business.id] = true;
+
+        //  $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
+        //}
 
       };
 
@@ -116,7 +123,6 @@ angular.module("google-map",
       };
 
       $scope.addMarker = function(lat, lng, data, index) {
-        // Create a new marker object
         var marker = new Pin({
           map: $scope.map,
           draggable: false,

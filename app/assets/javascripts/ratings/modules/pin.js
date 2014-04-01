@@ -1,13 +1,14 @@
 angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
   function Pin(opts, content, index) {
     google.maps.Marker.apply(this, arguments);
+
     this.active = false;
     this.infoWindow = null;
     this.data = content || {};
     this.index = index;
   }
 
-  Pin.prototype = new google.maps.Marker();
+  Pin.prototype = google.maps.Marker.prototype;
 
   Pin.prototype.toggleInfoWindow = function(template) {
     if (this.active) {
