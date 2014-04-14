@@ -15,7 +15,7 @@ angular.module("google-map",
     center: new google.maps.LatLng(37.7750, -122.4183),
     mapTypeId: 'road'
   };
-  
+
   /*
    * Creates either a new styled map from a hash of options,
    * or a prestyled Stamen map.
@@ -51,6 +51,7 @@ angular.module("google-map",
 
       $rootScope.$on("BusinessSearch", function(evt, data) {
         $scope.setUpMarkers(data);
+        $scope.move();
       });
 
       $scope.clearMarkers = function() {
@@ -64,42 +65,37 @@ angular.module("google-map",
         // First, check the length of our businesses array
         var list = $scope.businesses;
 
-//        if (list.length >= 200) {
- //         // We have a bunch of business so clear them out
-  //        list.length = 0;
-   //       $scope.clearMarkers();
-     //     $scope.existingMarkerList = {};
-   //     }
+        if (list.length >= 200) {
+          // We have a bunch of business so clear them out
+          list.length = 0;
+          $scope.clearMarkers();
+          $scope.existingMarkerList = {};
+        }
 
         // We havent hit our (arbitrary) limit, so add the new businesses
         var offset = list.length
             itr = 0,
             dataLen = data.length;
 
-        angular.forEach(data, function(business) {
-          var b = business.business;
-          $scope.addMarker(b.latitude, b.longitude, {businessName: b.name, score: business.most_recent_score}, offset + itr);
-          itr++;
-        });
 
         $scope.refresh();
 
-        //for (itr; itr < dataLen; itr++) {
-        //  //if ($scope.existingMarkerList[data[itr].business.id]) continue;
+        for (itr; itr < dataLen; itr++) {
+          if ($scope.existingMarkerList[data[itr].business.id]) continue;
 
-        //  //list[offset + itr] = data[itr];
+          list[offset + itr] = data[itr];
 
-        //  var business = data[itr].business;
+          var business = data[itr].business;
 
-        //  var metadata = {
-        //    businessName: business.name,
-        //    score: data[itr].most_recent_score
-        //  };
+          var metadata = {
+            businessName: business.name,
+            score: data[itr].most_recent_score
+          };
 
-        //  //$scope.existingMarkerList[data[itr].business.id] = true;
+          $scope.existingMarkerList[data[itr].business.id] = true;
 
-        //  $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
-        //}
+          $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
+        }
 
       };
 
@@ -147,7 +143,7 @@ angular.module("google-map",
           BroadcastService.broadcast("DestroyContentWindow");
 
           // If the user clicked on the currently selected marker,
-          // we don't want to reload the template.
+          // we don't want to reload the template. Instead, close the window.
           if ($scope.currentMarker === this) {
             $scope.currentMarker = null;
 

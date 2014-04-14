@@ -8,7 +8,9 @@
 body, html {
   height: 100%;
   background: #3a3939;
+  overflow: hidden;
 }
+
 button {
   outline: none;
 }

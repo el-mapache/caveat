@@ -1,13 +1,14 @@
-%a.pull-right{data: {"ng-click" => "hideSidebar()"}}
+%button.pull-right.btn{type: "button", data: {"ng-click" => "hideSidebar()"}, style: "margin-top: 5px"}
+  %i.icon-remove
   CLOSE
 %h1.bold-sans.ratings-black{style: "margin-top:20px;"}
   {{ businessObj.business.name }}
 %h4.muted.serif
   {{businessObj.business.address}}
--#%div{style: "background: rgba(228, 123, 61, 0.21);padding: 5px;"}
-  %h5.serif.pull-left{style: "margin-bottom: 0px"}
+.span4{style: "background: rgba(228, 123, 61, 0.21);padding: 5px; margin-left: auto;margin-right:auto"}
+  %h5.serif.pull-left{style: "margin-bottom: 0px; margin-top: 20px"}
     ALL-TIME
-  .pull-left{style: "position: relative;width: 35px;margin-left:5px;margin-top:0px"}
+  .span1{style: "position: relative; margin-left:5px;margin-top:0px"}
     %img{alt: "Badge", height: "80", src: "/assets/badge.svg", width: "80", style: "top:-25%;z-index:1"}
     %h4.serif.ratings-white{style: "position: absolute;top: 2%;left: 21%;font-size: 17.5px;z-index:2;"}
       {{ average }}

@@ -4,23 +4,23 @@
   
 %div#map-canvas.sepia-blur{"google-map"=>"", "ng-controller" => "MapCtrl", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}} 
 
-%div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}}
+%div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}, style: "overflow-y: auto;"}
   #business-banner-container
     = render "business_banner"
     .clearfix
-    %div
+    %div{style: "padding-bottom: 30px"}
       %h5 Click a previous inspection to see violations.
-      #violations-container{data: {"ng-controller" => "AccordionCtrl"}}
+      #violations-container
         = render "business_table"
 
--#.position-absolute.ratings-black-bg{style: "top:0%; left:50%;"}
-  %form.form-inline{data: {"ng-controller" => "TypeaheadCtrl"}, name: "streetSearch"}
+.position-absolute{style: "top: 40%; left: 0%;"}
+  %form.form-inline.span4{data: {"ng-controller" => "TypeaheadCtrl"}, name: "streetSearch"}
     %label
       Find a restaurant by name
 
     %span.alert.alert-error{data: {"ng-show" => "hasError.error"}} 
       {{hasError.message}}
     %br  
-    %input{type: "text", id: "business-search", placeholder: "Hot Dog Heaven", "ng-model" => "business", name: "business", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businesses | filter:$viewValue | limitTo: 8"}
+    %input#business-search{type: "text", placeholder: "Hot Dog Heaven", "ng-model" => "business", name: "business", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businesses | filter:$viewValue | limitTo: 8"}
     %input.btn{type: "submit", "ng-click" => "search()", value: "Search", "ng-disabled" => "streetSearch.business.$error.required"}
 
