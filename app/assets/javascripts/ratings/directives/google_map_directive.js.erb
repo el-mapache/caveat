@@ -119,11 +119,19 @@ angular.module("google-map",
       };
 
       $scope.addMarker = function(lat, lng, data, index) {
+        if (data.score > 85) {
+          var marker = "<%= asset_path('normal_marker.svg') %>";
+        } else if (data.score < 85 && data.score >= 70) {
+          var marker = "<%= asset_path('warning_marker.svg') %>";
+        } else {
+          var marker = "<%= asset_path('danger_marker.svg') %>";
+        }
+
         var marker = new Pin({
           map: $scope.map,
           draggable: false,
           animation: google.maps.Animation.DROP,
-          icon: "<%= asset_path('black_marker.svg') %>",
+          icon: marker,
           position: new google.maps.LatLng(lat, lng),
           enableEventPropagation: true
         }, data, index);
