@@ -24,6 +24,6 @@ production:
   reconnect: false
   database: caveat_production
   pool: 5
-  username: root
-  password:
+  username: primer
+  password: Constants.database["password"]
   socket: /tmp/mysql.sock
