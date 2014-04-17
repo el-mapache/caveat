@@ -7,8 +7,8 @@
     = image_tag("cute_rat.svg", height: 60, width: 60, class: "rat-svg")
 
 %form.form-inline.span4.position-absolute{data: {"ng-controller" => "TypeaheadCtrl"}, name: "streetSearch", style: "margin-top: 160px;z-index:100000000000000"}
-  %label
-    Find a restaurant by name
+  %label.ratings-black{style: "text-shadow: -2px 2px 2px #bebebe"}
+    %strong Find a restaurant by name
 
   %span.alert.alert-error{data: {"ng-show" => "hasError.error"}} 
     {{hasError.message}}

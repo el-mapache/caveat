@@ -1,18 +1,18 @@
-%button.pull-right.btn{type: "button", data: {"ng-click" => "hideSidebar()"}, style: "margin-top: 5px"}
+%button.pull-right.btn{type: "button", data: {"ng-click" => "hideSidebar()"}, style: "margin-top: 10px"}
   %i.icon-remove
   CLOSE
 %h1.bold-sans.ratings-black{style: "margin-top:20px;"}
   {{ businessObj.business.name }}
 %h4.muted.serif
   {{businessObj.business.address}}
-.span4{style: "background: rgba(228, 123, 61, 0.21);padding: 5px; margin-left: auto;margin-right:auto"}
-  %h5.serif.pull-left{style: "margin-bottom: 0px; margin-top: 20px"}
+-#.span4
+  %h4.bold-sans.pull-left{style: "margin-top: 30px"}
     ALL-TIME
   .span1{style: "position: relative; margin-left:5px;margin-top:0px"}
-    %img{alt: "Badge", height: "80", src: "/assets/badge.svg", width: "80", style: "top:-25%;z-index:1"}
-    %h4.serif.ratings-white{style: "position: absolute;top: 2%;left: 21%;font-size: 17.5px;z-index:2;"}
+    %img{alt: "Badge", height: "100", src: "/assets/badge.svg", width: "100", style: "top:-25%;z-index:1"}
+    %h4.serif.ratings-red{style: "position: absolute;top: 23%;left: 30%;font-size: 26px;z-index:2;"}
       {{ average }}
-  .molot.ratings-white.pull-left
+  .molot.ratings-white.pull-left{style: "margin-top: 10px"}
     %span.reset{style: "font-size: 46px;"} RAT
     %h2.inliner{style: "margin-left: -10px"} ING
   .clearfix
