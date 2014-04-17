@@ -110,7 +110,6 @@
 
     $scope.$on("HideBusiness", function(evt) {
       $scope.toggleBusinessWindow();
-      $scope.$apply();
     });
 
     $scope.$on("ShowBusiness", function(evt, businessObj) {

@@ -13,14 +13,3 @@
       #violations-container
         = render "business_table"
 
-.position-absolute{style: "top: 40%; left: 0%;"}
-  %form.form-inline.span4{data: {"ng-controller" => "TypeaheadCtrl"}, name: "streetSearch"}
-    %label
-      Find a restaurant by name
-
-    %span.alert.alert-error{data: {"ng-show" => "hasError.error"}} 
-      {{hasError.message}}
-    %br  
-    %input#business-search{type: "text", placeholder: "Hot Dog Heaven", "ng-model" => "business", name: "business", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businesses | filter:$viewValue | limitTo: 8"}
-    %input.btn{type: "submit", "ng-click" => "search()", value: "Search", "ng-disabled" => "streetSearch.business.$error.required"}
-

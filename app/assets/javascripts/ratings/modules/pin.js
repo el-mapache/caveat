@@ -1,4 +1,4 @@
-angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
+angular.module("Pin",['InfoWindow','BroadcastService']).factory("Pin", function(InfoWindow, BroadcastService) {
   function Pin(opts, content, index) {
     google.maps.Marker.apply(this, arguments);
 
@@ -12,9 +12,8 @@ angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
 
   Pin.prototype.toggleInfoWindow = function(template) {
     if (this.active) {
-      this.infoWindow.remove();
       this.active = false;
-      this.infoWindow = null;
+      this.removeWindow();
     } else {
       var infoWindow = new InfoWindow({latlng: this.getPosition(), map: this.map, content: template});
       this.infoWindow = infoWindow;
@@ -23,16 +22,17 @@ angular.module("Pin",['InfoWindow']).factory("Pin", function(InfoWindow) {
   };
 
   Pin.prototype.remove = function() {
+    this.removeWindow();
     google.maps.event.clearInstanceListeners(this);
     this.setMap(null);
   };
 
-  // This might not even be used anymore
   Pin.prototype.removeWindow = function() {
     if (!this.infoWindow) return;
 
     this.infoWindow.remove();
     this.infoWindow = null;
+    BroadcastService.broadcast("DestroyContentWindow");
   };
 
   return Pin;

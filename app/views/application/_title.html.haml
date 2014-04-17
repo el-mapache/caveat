@@ -5,3 +5,14 @@
   #raticon.pull-left
     = image_tag("badge.svg", width: 60, height: 60)
     = image_tag("cute_rat.svg", height: 60, width: 60, class: "rat-svg")
+
+%form.form-inline.span4.position-absolute{data: {"ng-controller" => "TypeaheadCtrl"}, name: "streetSearch", style: "margin-top: 160px;z-index:100000000000000"}
+  %label
+    Find a restaurant by name
+
+  %span.alert.alert-error{data: {"ng-show" => "hasError.error"}} 
+    {{hasError.message}}
+  %br  
+  %input#business-search{type: "text", placeholder: "Hot Dog Heaven", "ng-model" => "business", name: "business", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businesses | filter:$viewValue | limitTo: 8"}
+  %input.btn{type: "submit", "ng-click" => "search()", value: "Search", "ng-disabled" => "streetSearch.business.$error.required"}
+
