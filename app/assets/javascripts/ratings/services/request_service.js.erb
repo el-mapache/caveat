@@ -3,8 +3,8 @@
  * It exposes a single public method, 'get'
  *
 */
-angular.module("RequestService", []).service("RequestService", ["$http", function($http) {
-  var root = "http://localhost:9000<%#= Rails::Server.new.options[:Port] %>/api/v1/";
+angular.module("RequestService", []).service("RequestService", ["$http", "$location", function($http, $location) {
+  var root = window.location.href + "api/v1/";
 
   function makeQueryParameterString(params) {
     if (typeof params !== "object") return false;
