@@ -13,7 +13,7 @@
 
   // This controller simply provides a wrapper for the bootstrap dialog
   // directive.
-  app.controller("DialogCtrl", function($scope, $templateCache, $dialog) {
+  app.controller("DialogCtrl", ["$scope", "$templateCache", "$dialog", function($scope, $templateCache, $dialog) {
     $scope.options = {
       backdrop: true,
       keyboard: false,
@@ -25,77 +25,83 @@
     };
 
     $dialog.dialog($scope.options).open();
-  });
+  }]);
 
   // dialog directive is injected into this controller
-  app.controller("_DialogContentCtrl", function($scope, dialog, GeolocationService, BroadcastService, RequestService) {
+  app.controller("_DialogContentCtrl", [
+    "$scope",
+    "dialog",
+    "GeolocationService",
+    "BroadcastService",
+    "RequestService",
+    function($scope, dialog, GeolocationService, BroadcastService, RequestService) {
 
-    // Determine if geolocation is available in the users browser.
-    // TODO: Possibly ignore this and just show 20 or so businesses in the center 
-    // of San Francisco? 
-    // Maybe if geolocation is unavailable or the user isnt in san francisco, just show the center
-    // rather than breaking the whole app
-    if (!GeolocationService.isSupported()) { 
-      $scope.active = false;
-      $scope.error = {
-        hasError: true,
-        message: "Geolocation is not supported in your browser."
-      };
-    } else {
-      $scope.active = true
-
-      $scope.error = {
-        hasError: false,
-        message: ""
-      };
-    }
-
-    $scope.toggleActive = function() {
-      return $scope.active = !$scope.active;
-    }
-
-    $scope.locate = function() {
-      $scope._showSpinner();
-      $scope.toggleActive();
-      GeolocationService.getCurrentPosition($scope.getBusinesses);
-    };
-
-    $scope._showSpinner = function() {
-      var spinner = new Spinner({
-        lines: 13,
-        length: 10,
-        width: 5,
-        radius: 15,
-      }).spin(document.getElementById("locate"));
-    };
-
-    /* Query the server for businesses near the supplied coordinates.
-     *
-     * @param {coords} Object The latitude and longitude to search within.
-    */
-    $scope.getBusinesses = function(coords) {
-      var request = RequestService.get("businesses", {
-        lat: coords.latitude,
-        lng: coords.longitude
-      });
-
-      // Promise callbacks will never be executed without an $apply here
-      $scope.$apply()
-
-      request.success(function(data, status, headers, config) {
-        dialog.close();
-        BroadcastService.broadcast("closeModal", data);
-      }).error(function(data, status) {
+      // Determine if geolocation is available in the users browser.
+      // TODO: Possibly ignore this and just show 20 or so businesses in the center 
+      // of San Francisco? 
+      // Maybe if geolocation is unavailable or the user isnt in san francisco, just show the center
+      // rather than breaking the whole app
+      if (!GeolocationService.isSupported()) { 
+        $scope.active = false;
         $scope.error = {
           hasError: true,
-          message: "Something has gone horribly wrong. Contact the developer at once!"
+          message: "Geolocation is not supported in your browser."
         };
-        $scope.toggleActive();
-      });
-    };
-  });
+      } else {
+        $scope.active = true
 
-  app.controller("BusinessCtrl", function($scope, BroadcastService) {
+        $scope.error = {
+          hasError: false,
+          message: ""
+        };
+      }
+
+      $scope.toggleActive = function() {
+        return $scope.active = !$scope.active;
+      }
+
+      $scope.locate = function() {
+        $scope._showSpinner();
+        $scope.toggleActive();
+        GeolocationService.getCurrentPosition($scope.getBusinesses);
+      };
+
+      $scope._showSpinner = function() {
+        var spinner = new Spinner({
+          lines: 13,
+          length: 10,
+          width: 5,
+          radius: 15,
+        }).spin(document.getElementById("locate"));
+      };
+
+      /* Query the server for businesses near the supplied coordinates.
+       *
+       * @param {coords} Object The latitude and longitude to search within.
+      */
+      $scope.getBusinesses = function(coords) {
+        var request = RequestService.get("businesses", {
+          lat: coords.latitude,
+          lng: coords.longitude
+        });
+
+        // Promise callbacks will never be executed without an $apply here
+        $scope.$apply()
+
+        request.success(function(data, status, headers, config) {
+          dialog.close();
+          BroadcastService.broadcast("closeModal", data);
+        }).error(function(data, status) {
+          $scope.error = {
+            hasError: true,
+            message: "Something has gone horribly wrong. Contact the developer at once!"
+          };
+          $scope.toggleActive();
+        });
+      };
+  }]);
+
+  app.controller("BusinessCtrl", ["$scope", "BroadcastService", function($scope, BroadcastService) {
     $scope.showBusiness = false;
 
     $scope.hideSidebar = function() {
@@ -121,9 +127,9 @@
 
       $scope.$apply();
     });
-  });
+  }]);
 
-  app.controller("TypeaheadCtrl", function($scope, GeolocationService, RequestService, BroadcastService) {
+  app.controller("TypeaheadCtrl", ["$scope", "GeolocationService", "RequestService", "BroadcastService", function($scope, GeolocationService, RequestService, BroadcastService) {
     $scope.business = "";
     $scope.businesses = [];
     $scope.hasError = {
@@ -160,6 +166,6 @@
         }
       });
     };
-  });
+  }]);
 })(window);
 

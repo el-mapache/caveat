@@ -26,4 +26,4 @@ production:
   pool: 5
   username: primer
   password: Constants.database["password"]
-  socket: /tmp/mysql.sock
+  socket: /var/lib/mysql/mysql.sock
