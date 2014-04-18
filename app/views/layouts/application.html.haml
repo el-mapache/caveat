@@ -1,13 +1,25 @@
 !!!
 %html{lang: "en", "ng-app" => "ratings"}
-%meta{name: "viewport",  content: "initial-scale=1.0, user-scalable=no"}
-%head
-  %title Caveat
-  = stylesheet_link_tag "application", media: "all"
-  %link{href: 'http://fonts.googleapis.com/css?family=Merriweather', rel: 'stylesheet', type: 'text/css'}
-  %link{href: 'http://fonts.googleapis.com/css?family=Open+Sans:700, 400', rel: 'stylesheet', type: 'text/css'}
-  %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}  
-  = javascript_include_tag "application"
-  = csrf_meta_tags 
-%body
-  = yield 
+  %meta{name: "viewport",  content: "initial-scale=1.0, user-scalable=no"}
+  %head
+    %title RATings
+    = stylesheet_link_tag "application", media: "all"
+    %link{href: 'http://fonts.googleapis.com/css?family=Merriweather', rel: 'stylesheet', type: 'text/css'}
+    %link{href: 'http://fonts.googleapis.com/css?family=Open+Sans:700, 400', rel: 'stylesheet', type: 'text/css'}
+    %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAS-dQdovaORj1V3dLiQp931WPqX0-KFpg&sensor=true"}  
+    = javascript_include_tag "application"
+    = csrf_meta_tags 
+  %body
+    #main
+      = yield 
+    %footer
+      %script
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-50165710-1', 'webfaction.com');
+        ga('send', 'pageview');
+
+
