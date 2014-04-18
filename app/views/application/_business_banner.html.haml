@@ -1,18 +1,19 @@
 %button.pull-right.btn{type: "button", data: {"ng-click" => "hideSidebar()"}, style: "margin-top: 10px"}
   %i.icon-remove
   CLOSE
-%h1.bold-sans.ratings-black{style: "margin-top:20px;"}
+%h2.bold-sans.ratings-black
   {{ businessObj.business.name }}
 %h4.muted.serif
   {{businessObj.business.address}}
--#.span4
-  %h4.bold-sans.pull-left{style: "margin-top: 30px"}
-    ALL-TIME
-  .span1{style: "position: relative; margin-left:5px;margin-top:0px"}
-    %img{alt: "Badge", height: "100", src: "/assets/badge.svg", width: "100", style: "top:-25%;z-index:1"}
-    %h4.serif.ratings-red{style: "position: absolute;top: 23%;left: 30%;font-size: 26px;z-index:2;"}
-      {{ average }}
-  .molot.ratings-white.pull-left{style: "margin-top: 10px"}
-    %span.reset{style: "font-size: 46px;"} RAT
-    %h2.inliner{style: "margin-left: -10px"} ING
-  .clearfix
+.span4.centerer.ratings-border-top.ratings-border-bottom.large-margin-top.large-margin-bottom
+  .centerer.sm-pad-top.sm-pad-bottom
+    %p.molot.ratings-white.pull-left.ratings-text-shadow.medium-margin-top{style: "font-size: 31px;margin-right: 10px;"}
+      ALL-TIME
+    .span1.position-relative{style: "margin-left:5px;"}
+      %img{alt: "Badge", height: "70", src: "/assets/badge.svg", width: "70"}
+      %h4.serif.ratings-red{style: "position: absolute;top: 23%;left: 30%;font-size: 26px;"}
+        {{ average }}
+    .molot.ratings-white.pull-left{style: "margin-top: 10px; margin-left: 10px"}
+      %span.reset.ratings-text-shadow{style: "font-size: 46px;"} RAT
+      %h2.inliner.ratings-text-shadow{style: "margin-left: -10px"} ING
+    .clearfix
