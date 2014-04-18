@@ -2,7 +2,7 @@
 
 #myModal{data: {"ng-controller" => "DialogCtrl"}}
   
-%div#map-canvas.sepia-blur{"google-map"=>"", "ng-controller" => "MapCtrl", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}} 
+%div#map-canvas.sepia-blur{"google-map"=>"", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}} 
 
 %div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}, style: "overflow-y: auto;"}
   #business-banner-container
