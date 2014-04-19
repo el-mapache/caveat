@@ -4,14 +4,6 @@ class API::V1::BusinessesController < ApplicationController
       render json: Business.select("businesses.name").find(:all) and return
     end
 
-    #cache = $redis.get(params[:address])
-
-    #if cache
-     # @businesses = JSON.parse(cache)
-   # else
-     # $redis.setex(params[:address], 172800, @businesses.to_json)
-    #end
-
     @businesses = API::V1::BusinessPresenter.present(Business.all_with_associations([params[:lat], params[:lng]]))
     render json: @businesses
   end
@@ -19,7 +11,7 @@ class API::V1::BusinessesController < ApplicationController
   def show
     name = params[:id].to_s.strip
 
-    cache = $redis.get(name)
+    cache = $redis.connected? ? $redis.get(name) : nil
 
     if cache
       @business = JSON.parse(cache)
