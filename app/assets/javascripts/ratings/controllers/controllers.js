@@ -129,9 +129,14 @@
     });
   }]);
 
-  app.controller("TypeaheadCtrl", ["$scope", "GeolocationService", "RequestService", "BroadcastService", function($scope, GeolocationService, RequestService, BroadcastService) {
-    $scope.business = "";
-    $scope.businesses = [];
+  app.controller("TypeaheadCtrl", [
+    "$scope", 
+    "GeolocationService",
+    "RequestService",
+    "BroadcastService", 
+  function($scope, GeolocationService, RequestService, BroadcastService) {
+    $scope.businessName = "";
+    $scope.businessNames = [];
     $scope.hasError = {
       error: false,
       message: ""
@@ -140,13 +145,13 @@
     RequestService.get("businesses", {name: "all"}).success(function(response) {
       if (response && response.length !== 0) {
         for (var i = 0, l = response.length; i < l; i++) {
-          $scope.businesses.push(response[i].name);
+          $scope.businessNames.push(response[i].name);
         }
       }
     });
 
     $scope.search = function() {
-      var request = RequestService.get("businesses/" + $scope.business, {})
+      var request = RequestService.get("businesses/" + $scope.businessName, {})
 
       request.success(function(response, status) {
         if (response.length !== 0) {

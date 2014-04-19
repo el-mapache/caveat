@@ -14,7 +14,7 @@
     %span.alert.alert-error{data: {"ng-show" => "hasError.error"}} 
       {{hasError.message}}
     %br  
-    %input#business-search{type: "text", placeholder: "Hot Dog Heaven", "ng-model" => "business", name: "business", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businesses | filter:$viewValue | limitTo: 8"}
+    %input#business-search{type: "text", placeholder: "Hot Dog Heaven", "ng-model" => "businessName", name: "businessName", value: "Hot Dog Heaven", required: true, "typeahead" =>"b for b in businessNames | filter:$viewValue | limitTo: 8"}
     %button.btn.black-bg{type: "submit", "ng-click" => "search()", value: "Search", "ng-disabled" => "streetSearch.business.$error.required"}
       %i.icon-search.icon-white
 
