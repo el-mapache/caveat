@@ -119,9 +119,9 @@ angular.module("google-map",
       };
 
       $scope.addMarker = function(lat, lng, data, index) {
-        if (data.score > 85 || data.score == 0) {
+        if (data.score >= 90 || data.score == 0) {
           var marker = "<%= asset_path('normal_marker.svg') %>";
-        } else if (data.score < 85 && data.score >= 70) {
+        } else if (data.score < 90 && data.score >= 70) {
           var marker = "<%= asset_path('warning_marker.svg') %>";
         } else {
           var marker = "<%= asset_path('danger_marker.svg') %>";

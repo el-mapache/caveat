@@ -107,7 +107,9 @@ img[src*="iws3.png"] {
 #myModal {
 
 }
-
+.ratings-text-shadow {
+  text-shadow: -3px -2px 0px #3a3939;
+}
 .modal-content {
   background: transparent;
 }
@@ -183,7 +185,6 @@ img[src*="iws3.png"] {
 
 .info-window .ratings-link:hover {
   color: #d75044;
-  /* background: #e2ebd6; */
   text-decoration: underline;
 }
 
@@ -212,7 +213,6 @@ img[src*="iws3.png"] {
 }
 
 #title-badge {
-  position: absolute;
   top: 30px;
   left: 0;
   z-index: 100000000000000;
@@ -223,21 +223,11 @@ img[src*="iws3.png"] {
   height: 89px; 
 }
 
-#title-badge span {
-  text-shadow: -3px -2px 0px #3a3939;
-}
-
 #title-badge h2 {
   margin-left: -15px;
-  text-shadow: -3px -2px 0px #3a3939;
 }
 
-#raticon {
-  position: relative;
-}
-
-#raticon .rat-svg {
-  position: absolute;
+#title-badge .rat-svg {
   top: 0;
   left: 0;
   height: 60px;
@@ -446,13 +436,6 @@ td.bordered {
   margin-bottom: 0px;
 }
 
-#business-banner-container {
-  margin-left:30px;
-  width:90%;
-  margin-left:auto;
-  margin-right:auto;
-}
-
 #violations-container {
 /*  border: 4px solid #3a3939; */
   margin-top:20px;
@@ -460,4 +443,34 @@ td.bordered {
 
 .position-absolute {
   position: absolute;
+}
+.position-relative {
+  position: relative;
+}
+
+.ratings-border-top {
+  border-top: 2px solid #3a3939;
+}
+
+.ratings-border-bottom {
+  border-bottom: 2px solid #3a3939;
+}
+
+.sm-pad-top {
+  padding-top: 10px
+}
+
+.sm-pad-bottom {
+  padding-bottom: 10px;
+}
+.medium-margin-top {
+  margin-top: 20px;
+}
+
+.large-margin-top {
+  margin-top: 30px;  
+}
+
+.large-margin-bottom {
+  margin-bottom: 30px;  
 }
