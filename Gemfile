@@ -27,7 +27,7 @@ group :development, :test do
 end
 
 # Front End
-gem 'angularjs-rails'
+gem 'angularjs-rails', "~> 1.0.7"
 gem 'angular-ui-bootstrap-rails', "~> 0.4.0.0" # specify older version for $dialog service
 gem 'jquery-rails', '~> 2.0'
 gem 'haml-rails', '0.3.4'
