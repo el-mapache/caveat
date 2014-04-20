@@ -217,7 +217,6 @@ angular.module("google-map",
       scope.$on("closeModal", function(evt, data) {
         element.removeClass("sepia-blur");
         scope.move(17);
-        console.log(data)
         scope.setUpMarkers(data);
       });
     }

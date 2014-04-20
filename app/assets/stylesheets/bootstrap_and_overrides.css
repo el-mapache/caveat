@@ -50,14 +50,12 @@ body {
 
 #search {
   width: 308px;
-  background: #191919;
   margin-top: 180px;
   margin-left:30px;
-  z-index: 100000000000;
 }
 
-#search form {
-  padding: 5px;
+#search:hover {
+  cursor: pointer;
 }
 
 img[src*="iws3.png"] {
@@ -237,6 +235,13 @@ img[src*="iws3.png"] {
 .angular-google-map {
   display: block;
 }
+
+#business-search {
+  border-radius: 0px;
+  padding: 10px;
+}
+
+
 
 #business-display {
   height: 100%;
@@ -456,6 +461,14 @@ td.bordered {
   border-bottom: 2px solid #3a3939;
 }
 
+.sm-pad {
+  padding: 10px
+}
+
+.med-pad {
+  padding: 20px;
+}
+
 .sm-pad-top {
   padding-top: 10px
 }
@@ -468,9 +481,26 @@ td.bordered {
 }
 
 .large-margin-top {
-  margin-top: 30px;  
+  margin-top: 30px;
 }
 
 .large-margin-bottom {
-  margin-bottom: 30px;  
+  margin-bottom: 30px;
+}
+
+.search-animate {
+  -webkit-transition: opacity 0.1s, width 0.3s !important;
+  -moz-transition: 0.2s !important;
+  transition: opacity 0.1, width 0.3s !important;
+  width: 0px;
+  opacity:0;
+}
+
+.searchAnimateActive {
+  width: 245px;
+  opacity:1;
+}
+
+.inherit {
+  width: inherit;
 }

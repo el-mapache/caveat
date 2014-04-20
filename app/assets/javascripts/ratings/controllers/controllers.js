@@ -7,7 +7,8 @@
      'BroadcastService',
      'RequestService',
      'google-map',
-     'simple-sort'
+     'simple-sort',
+     'ratings-search'
     ]
   );
 
@@ -130,10 +131,10 @@
   }]);
 
   app.controller("TypeaheadCtrl", [
-    "$scope", 
+    "$scope",
     "GeolocationService",
     "RequestService",
-    "BroadcastService", 
+    "BroadcastService",
   function($scope, GeolocationService, RequestService, BroadcastService) {
     $scope.businessName = "";
     $scope.businessNames = [];
@@ -150,8 +151,13 @@
       }
     });
 
+    $scope.$watch('streetSearch.businessName.$modelValue', function(val) {
+      $scope.businessName = val;
+    });
+
     $scope.search = function() {
-      var request = RequestService.get("businesses/" + $scope.businessName, {})
+      if (!$scope.businessName) return;
+      var request = RequestService.get("businesses/" + $scope.businessName, {});
 
       request.success(function(response, status) {
         if (response.length !== 0) {

@@ -11,7 +11,13 @@ class API::V1::BusinessesController < ApplicationController
   def show
     name = params[:id].to_s.strip
 
-    cache = $redis.connected? ? $redis.get(name) : nil
+    # this seems ridiculous but necessary to test if redis is connected and running
+    # If redis is running the connected? method wont be callable on the object
+    cache = if $redis.respond_to?(:connected?)
+              nil
+            else
+              $redis.get(name)
+            end
 
     if cache
       @business = JSON.parse(cache)

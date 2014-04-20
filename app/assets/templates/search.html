@@ -1,0 +1,12 @@
+<div>
+  <div id="search" class="position-absolute" style="z-index: 1;">
+    <div ng-click="toggleSearch()" class="sm-pad black-bg pull-left" style="width: 20px;">
+      <i class="icon-search ratings-white" style="font-size: 21px;"></i>
+    </div>
+
+    <form ng-class="{searchAnimateActive: searchActive}" class="pull-left search-animate" ng-controller="TypeaheadCtrl" ng-submit="search()" name="streetSearch">
+      <input focusable has-focus="{{searchActive}}" id="business-search" class="inherit" type="text" placeholder="Hot Dog Heaven" ng-model="businessName" name="businessName" value="Hot" required typeahead="b for b in $parent.$parent.businessNames | filter:$viewValue | limitTo: 12" typeahead-on-select="search()"/>
+      <button type="submit" class="hide"></button>
+    </form>
+  </div>
+</div>
