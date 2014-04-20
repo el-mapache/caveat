@@ -143,6 +143,10 @@
       message: ""
     };
 
+    $scope.close= function() {
+      $scope.hasError = {error: false, message: ""};
+    };
+
     RequestService.get("businesses", {name: "all"}).success(function(response) {
       if (response && response.length !== 0) {
         for (var i = 0, l = response.length; i < l; i++) {
@@ -169,12 +173,14 @@
           });
 
           BroadcastService.broadcast("BusinessSearch", [business]);
-        } else {
-          $scope.hasError = {
-            error: true,
-            message: "We weren't able to locate that establishment. Maybe the rats got there first...."
-          };
         }
+      });
+
+      request.error(function() {
+        $scope.hasError = {
+          error: true,
+          message: "Sorry, we weren't able to locate that establishment."
+        };
       });
     };
   }]);
