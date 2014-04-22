@@ -37,6 +37,8 @@
     "RequestService",
     function($scope, dialog, GeolocationService, BroadcastService, RequestService) {
 
+      var gls = GeolocationService;
+
       // Determine if geolocation is available in the users browser.
       // TODO: Possibly ignore this and just show 20 or so businesses in the center 
       // of San Francisco? 
@@ -64,7 +66,14 @@
       $scope.locate = function() {
         $scope._showSpinner();
         $scope.toggleActive();
-        GeolocationService.getCurrentPosition($scope.getBusinesses);
+        // Overriding for now to force location to the center of san francisco.
+        gls.getCurrentPosition = (function(onSuccess) {
+          gls.updateCurrentPosition({
+            latitude: 37.778146, 
+            longitude: -122.4084693
+          });
+          onSuccess(gls.currentPosition);
+        })($scope.getBusinesses);
       };
 
       $scope._showSpinner = function() {
@@ -87,7 +96,7 @@
         });
 
         // Promise callbacks will never be executed without an $apply here
-        $scope.$apply()
+        //$scope.$apply()
 
         request.success(function(data, status, headers, config) {
           dialog.close();
