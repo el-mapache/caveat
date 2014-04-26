@@ -29,9 +29,10 @@ angular.module("cWindow",
   return {
     restrict: "EA",
     replace: true,
-    template: "<div><div><p class='helvetica business-name'>{{businessName}}</p><div class='clearfix rat-icons'></div><a class='ratings-link' href='#' data-ng-hide='!violations' data-ng-click='seeBusiness()'>SEE VIOLATIONS!</a><p class='no-violations' data-ng-show='!violations'>VERMIN FREE!</p></div></div>",
+    template: "<div ng-animate='{show: \'fade-hide\', hide: \'fade-hide\'}'}><div><p class='helvetica business-name'>{{businessName}}</p><div class='clearfix rat-icons'></div><a class='ratings-link' href='#' data-ng-hide='!violations' data-ng-click='seeBusiness()'>SEE VIOLATIONS!</a><p class='no-violations' data-ng-show='!violations'>VERMIN FREE!</p></div></div>",
     scope: true,
 		compile: function(element, attrs) {
+      console.log(element);
 			var scoreAsRats = scoreToRats(parseInt(attrs.score));
 
       if (scoreAsRats > 0) {
@@ -55,23 +56,25 @@ angular.module("cWindow",
             BroadcastService.broadcast("ShowBusiness", scope.$parent.businesses[scope.businessIndex]);
 
             scope.toggleBusiness();
-	        };
+          };
 
-					// TODO this is a hack but I cant seem to get everything scoped
-					// correctly any other way.
-	        scope.$apply(function() {
-	          $compile(element.html())(scope);
-						if(scope.violations) {
-	            var interval = setInterval(function() {
-								// this seems to take a few hundred milliseconds to appear on the page
-	              if ($(".ratings-link").is(":visible")) {
-	                clearInterval(interval);
-	                $(".ratings-link").on("click", function(evt) {
+          // TODO this is a hack but I cant seem to get everything scoped
+          // correctly any other way.
+          scope.$apply(function() {
+
+            //$compile(element.html())(scope);
+
+            if(scope.violations) {
+              var interval = setInterval(function() {
+                // this seems to take a few hundred milliseconds to appear on the page
+                if ($(".ratings-link").is(":visible")) {
+                 clearInterval(interval);
+                 $(".ratings-link").on("click", function(evt) {
                     evt.stopPropagation();
-	                  scope.seeBusiness();
-	                });
-	               }
-	            },25);
+                    scope.seeBusiness();
+                 });
+                }
+	            },50);
             }
 	        });
 				  

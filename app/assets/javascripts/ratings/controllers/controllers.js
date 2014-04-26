@@ -40,10 +40,6 @@
       var gls = GeolocationService;
 
       // Determine if geolocation is available in the users browser.
-      // TODO: Possibly ignore this and just show 20 or so businesses in the center 
-      // of San Francisco? 
-      // Maybe if geolocation is unavailable or the user isnt in san francisco, just show the center
-      // rather than breaking the whole app
       if (!GeolocationService.isSupported()) { 
         $scope.active = false;
         $scope.error = {
@@ -144,19 +140,22 @@
     "GeolocationService",
     "RequestService",
     "BroadcastService",
-  function($scope, GeolocationService, RequestService, BroadcastService) {
+  function($scope, GeolocationService, RequestService, BroadcastService, $timeout) {
     $scope.businessName = "";
     $scope.businessNames = [];
     $scope.hasError = {
       error: false,
       message: ""
     };
+    $scope.isSearching = false;
 
-    $scope.close= function() {
+    $scope.close = function() {
       $scope.hasError = {error: false, message: ""};
     };
 
-    RequestService.get("businesses", {name: "all"}).success(function(response) {
+    RequestService.get("businesses", {
+      name: "all"
+    }).success(function(response) {
       if (response && response.length !== 0) {
         for (var i = 0, l = response.length; i < l; i++) {
           $scope.businessNames.push(response[i].name);
@@ -168,8 +167,12 @@
       $scope.businessName = val;
     });
 
-    $scope.search = function() {
-      if (!$scope.businessName) return;
+
+    $scope.search = function(item, model, label) {
+      if (item && $scope.businessName !== item) $scope.businessName = item;
+      if (!$scope.businessName || $scope.isSearching) return;
+
+      $scope.isSearching = true;
       var request = RequestService.get("businesses/" + $scope.businessName, {});
 
       request.success(function(response, status) {
@@ -182,6 +185,7 @@
           });
 
           BroadcastService.broadcast("BusinessSearch", [business]);
+          $scope.isSearching = false;
         }
       });
 

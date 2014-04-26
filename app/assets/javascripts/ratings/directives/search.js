@@ -15,15 +15,12 @@ angular.module('ratings-search', [])
     }
   };
 })
-.directive('focusable', function($timeout) {
+.directive('focusable', function($timeout, $parse) {
   return {
     priority: 0,
     restrict: 'A',
-    scope: {
-      focused: "@hasFocus"
-    },
     link: function(scope, element, attrs) {
-      scope.$watch("focused", function(value) {
+      attrs.$observe('hasFocus', function(value) {
         if (value == "true"){
           element[0].focus();
         }

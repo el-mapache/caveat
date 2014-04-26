@@ -33,6 +33,7 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
   InfoBox.prototype.remove = function() {
     if (this._div) {
       this._div.parentNode.removeChild(this._div);
+      this._div.className = this._div.className + "fade-show";
       this._div = null;
       // This is necessary to completely remove the info window object
       // otherwise the google map persists this in memory
