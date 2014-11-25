@@ -18,7 +18,6 @@ end
 
 group :development do
   gem 'mysql2'
-  gem 'debugger'
   gem "rspec-rails"
   gem "shoulda-matchers"
   gem "factory_girl_rails", "~> 4.0"
