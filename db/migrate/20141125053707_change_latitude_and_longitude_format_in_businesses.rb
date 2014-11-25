@@ -1,11 +1,17 @@
 class ChangeLatitudeAndLongitudeFormatInBusinesses < ActiveRecord::Migration
   def up
-    change_column :businesses, :latitude, :decimal, {precision: 10, scale: 6}
-    change_column :businesses, :longitude, :decimal, {precision: 10, scale: 6}
+    connection.execute(%q{
+      alter table businesses
+      alter column latitude type decimal(10,6) using cast(latitude as decimal)
+      alter column longitude type decimal(10,6) using cast(longitude as decimal)
+    })
   end
 
   def down
-    change_column :businesses, :longitude, :string
-    change_column :businesses, :latitude, :string
+    connection.execute(%q{
+      alter table businesses
+      alter column latitude type string using cast(latitude as string)
+      alter column longitude type string using cast(longitude as string)
+    })
   end
 end
