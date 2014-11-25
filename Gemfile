@@ -5,7 +5,7 @@ gem 'rails', '3.2.6'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
+gem 'pg'
 gem "geocoder"
 gem "redis"
 
@@ -17,10 +17,8 @@ group :assets do
 end
 
 group :development do
-  gem "haml-rails", "0.3.4"
-end
-
-group :development, :test do
+  gem 'mysql2'
+  gem 'debugger'
   gem "rspec-rails"
   gem "shoulda-matchers"
   gem "factory_girl_rails", "~> 4.0"
@@ -40,9 +38,5 @@ gem "twitter-bootstrap-rails"
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'
 
-# Use unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
-# Deploy with Capistrano
-gem 'capistrano'
-gem "debugger"
