@@ -1,0 +1,21 @@
+#myModal
+  %div{style: "width: 40%;margin:0 auto"}
+    .center-align
+      %h3.yellow.serif
+        San Francisco health inspectors gave
+      %h1.ratings-red.molot
+        OVER 3 VIOLATIONS 
+      %h4.ratings-white.serif
+        per inspection to
+      %h1.ratings-red.molot
+        73% OF RESTAURANTS 
+      %h4.yellow.serif
+        this past year...
+    .clearfix
+    %br
+    %br
+    .center-align
+      %p{class: "alert alert-error", data: {"ng-show" => "error.hasError"}}
+        {{error.message}}
+      %button#locate.ratings-btn.thin-sans.span3{data: {"ng-click" => "locate()", "ng-disabled" => "!active"}} Find filth near me
+  .clearfix

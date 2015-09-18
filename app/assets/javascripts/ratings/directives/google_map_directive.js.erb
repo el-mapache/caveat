@@ -1,0 +1,224 @@
+angular.module("google-map", [
+   'BroadcastService',
+   'GeolocationService',
+   'RequestService',
+   'Pin',
+   'FileLoader',
+   'cWindow'
+]).directive("googleMap", function($compile, BroadcastService, GeolocationService, RequestService, Pin, FileLoader) {
+  // Map defaults
+  var _defaults = {
+    zoom: 14,
+    center: new google.maps.LatLng(37.7750, -122.4183),
+    mapTypeId: 'road'
+  };
+
+  /*
+   * Creates either a new styled map from a hash of options,
+   * or a prestyled Stamen map.
+   *
+  */
+  function drawMap(element, options, styled) {
+    var map = new google.maps.Map(element, options),
+        layer = null;
+
+    if (typeof styled === "object") {
+      map.mapTypes.set('map_style', styled);
+      map.setMapTypeId('map_style');
+    } else if (typeof styled === "string") {
+      layer = styled;
+      map.mapTypes.set(layer, new google.maps.StamenMapType(layer));
+      map.setMapTypeId(layer);
+    }
+    return map;
+  }
+
+  return {
+    priority: 100,
+    restrict: 'EA',
+    template: "<div class='angular-google-map' ng-transclude></div>",
+    replace: false,
+    transclude: true,
+    scope: true,
+    controller: function($scope, $compile, $rootScope, BroadcastService) {
+      $scope.currentMarker = null;
+      $scope.businesses = [];
+      $scope.markers = [];
+      $scope.existingMarkerList = {};
+
+      $rootScope.$on("BusinessSearch", function(evt, data) {
+        $scope.setUpMarkers(data);
+        $scope.move();
+      });
+
+      $scope.clearMarkers = function() {
+        angular.forEach($scope.markers, function(marker) {
+          marker.remove();
+        });
+        $scope.markers.length = 0;
+      };
+
+      $scope.setUpMarkers = function(data) {
+        // First, check the length of our businesses array
+        var list = $scope.businesses;
+
+        if (list.length >= 200) {
+          // We have a bunch of business so clear them out
+          list.length = 0;
+          $scope.clearMarkers();
+          $scope.existingMarkerList = {};
+        }
+
+        // We havent hit our (arbitrary) limit, so add the new businesses
+        var offset = list.length
+            itr = 0,
+            dataLen = data.length;
+
+
+        $scope.refresh();
+
+        for (itr; itr < dataLen; itr++) {
+          if ($scope.existingMarkerList[data[itr].business.id]) continue;
+
+          list[offset + itr] = data[itr];
+
+          var business = data[itr].business;
+
+          var metadata = {
+            businessName: business.name,
+            score: data[itr].most_recent_score
+          };
+
+          $scope.existingMarkerList[data[itr].business.id] = true;
+
+          $scope.addMarker(business.latitude, business.longitude, metadata, offset + itr);
+        }
+
+      };
+
+      // Force a re-draw of the google map
+      $scope.refresh = function() {
+        google.maps.event.trigger($scope.map, "resize");
+      };
+
+      /*
+       * Moves to the position returned by the location, service
+       * @param {zoom} Integer Zoom the map to the desired level
+      */
+      $scope.move = function(zoom) {
+        var lat = GeolocationService.currentPosition.latitude,
+            lng = GeolocationService.currentPosition.longitude
+
+        $scope.map.panTo(new google.maps.LatLng(lat, lng));
+
+        // Zoom in the map if a new zoom was specified.
+        if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
+      };
+
+      $scope.addMarker = function(lat, lng, data, index) {
+        var icon;
+
+        if (data.score >= 90 || data.score == 0) {
+          icon = "<%= asset_path('normal_marker.svg') %>";
+        } else if (data.score < 90 && data.score >= 70) {
+          icon = "<%= asset_path('warning_marker.svg') %>";
+        } else {
+          icon = "<%= asset_path('danger_marker.svg') %>";
+        }
+
+        var marker = new Pin({
+          map: $scope.map,
+          draggable: false,
+          animation: google.maps.Animation.DROP,
+          icon: icon,
+          position: new google.maps.LatLng(lat, lng),
+          enableEventPropagation: true
+        }, data, index);
+
+        google.maps.event.addDomListener(marker, 'click', $scope.setCurrentWindow);
+
+        // Add the marker to the map directive's list of markers
+        $scope.markers.push(marker);
+      };
+
+      $scope.setCurrentWindow = function() {
+        if ($scope.currentMarker) {
+          // Remove the info window from the DOM/Google map
+          $scope.currentMarker.toggleInfoWindow();
+
+          // Remove the child controller scope from angular
+          BroadcastService.broadcast("DestroyContentWindow");
+
+          // If the user clicked on the currently selected marker,
+          // we don't want to reload the template. Instead, close the window.
+          if ($scope.currentMarker === this) {
+            $scope.currentMarker = null;
+
+            return false;
+          }
+
+          $scope.currentMarker = null;
+        }
+
+        $scope.map.panTo(this.getPosition());
+        var template = $compile('<div content-window business-index="' + this.index + '" business-name="'+this.data.businessName +'" score="'+this.data.score+'"></div>')($scope);
+       	this.toggleInfoWindow(template)
+
+        $scope.currentMarker = this;
+      };
+    },
+
+    link: function(scope, element, attrs, controller) {
+      var styledMap = null,
+          options = null;
+
+      if (attrs.stylers) {
+        FileLoader.load(attrs.stylers).success(function(data, status) {
+          styledMap = new google.maps.StyledMapType(data.stylers, {name: "Styled Map"});
+        });
+      } else if (attrs.stamentype) {
+        styledMap = attrs.stamentype;
+      }
+
+      if (attrs.options) {
+        // Extend the defaults with the passed in data options, interpereted as json
+        options = angular.extend({}, _defaults, angular.fromJson(attrs.options));
+      } else {
+        options = _defaults;
+      }
+
+      google.maps.event.addDomListener(window, 'load', function() {
+        scope.map = drawMap(element[0], options, styledMap);
+
+        google.maps.event.addListener(scope.map, 'dragend', function(e) {
+          var center = scope.map.getCenter();
+          var coords = {
+            latitude: center.lat() + "",
+            longitude: center.lng() + ""
+          };
+
+          GeolocationService.updateCurrentPosition(coords);
+
+          request = RequestService.get("businesses", {
+            lat: coords.latitude,
+            lng: coords.longitude
+          });
+
+          scope.$apply();
+
+          request.success(function(data) {
+            scope.setUpMarkers(data);
+          });
+        });
+      });
+
+      // This function kicks off the initial marker load event
+      scope.$on("closeModal", function(evt, data) {
+        element.removeClass("sepia-blur");
+        scope.move(17);
+        scope.setUpMarkers(data);
+      });
+    }
+  };
+});
+

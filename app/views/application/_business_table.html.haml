@@ -1,0 +1,30 @@
+%table.table.first
+  %thead
+    %tr.ratings-black-bg.ratings-white
+      %th.score SCORE
+      %th.violations-count VIOLATIONS COUNT
+      %th.date DATE
+
+%accordion
+  %div{"accordion-group" => "", "ng-repeat" => "i in businessObj.inspections_violations | simpleSort", "is-open" => "isOpen"}
+    %table.table.business-table{"ng-show" =>"i.violations.length", "ng-click" => "isOpen = !isOpen"}
+      %tbody
+        %tr{"ng-class" => "{active: isOpen}"}
+          %td.score.bordered 
+            %h3
+              {{ i.inspection.inspection.score }}
+          %td.violations-count.bordered 
+            {{ i.violations_count }}
+          %td.date 
+            {{ i.inspection.formatted_date }}
+    %div{"collapse" => "!isOpen"}
+      %table.table.violations-table
+        %thead
+          %tr.ratings-black-bg.ratings-white
+            %th.first-child DESCRIPTION
+            %th CORRECTED?
+          %tbody
+            %tr{"ng-repeat" => "v in i.violations"}
+              %td.bordered {{ v.description }}
+              %td {{ v.pending ? "no" : "yes" }}
+

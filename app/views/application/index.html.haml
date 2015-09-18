@@ -1,0 +1,16 @@
+= render "title"
+
+#myModal{data: {"ng-controller" => "DialogCtrl"}}
+
+%div#map-canvas.sepia-blur.position-absolute{"google-map"=>"", data: {stamenType: "toner-lite", options: '{"streetViewControl": false, "zoomControl": false, "panControl": false, "rotateControl": false, "mapTypeControl": false}'}}
+
+%div#business-display{data: {"ng-controller" => "BusinessCtrl", "ng-show" => "showBusiness", "ng-animate" => "{show: 'fade-show', hide: 'fade-hide'}"}, style: "overflow-y: auto;"}
+  #business-banner-container
+    %div{style: "padding:0 30px 0 30px"}
+      = render "business_banner"
+      .clearfix
+      %div{style: "padding-bottom: 30px"}
+        %h5 Click a previous inspection to see violations.
+        #violations-container
+          = render "business_table"
+

@@ -1,0 +1,19 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: ratings_development
+  pool: 5
+
+#test:
+#  adapter: sqlite3
+#  database: db/test.sqlite3
+#  pool: 5
+#  timeout: 5000
+
+production:
+  adapter: postgresql
+  encoding: utf8
+  reconnect: false
+  database: ratings_development
+  pool: 5
+  username: adamb

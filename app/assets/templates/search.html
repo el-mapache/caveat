@@ -1,0 +1,19 @@
+<section>
+  <div id="search" class="position-absolute" style="z-index: 1;" ng-controller="TypeaheadCtrl">
+    <div ng-show="hasError.error">
+      <div alert type="'danger'" close="close()">
+        {{hasError.message}}
+      </div>
+    </div>
+
+    <div ng-click="toggleSearch()" class="sm-pad black-bg pull-left" style="width: 20px;">
+      <i class="icon-search ratings-white" style="font-size: 21px;"></i>
+    </div>
+
+
+    <form ng-class="{searchAnimateActive: searchActive}" class="pull-left search-animate"  ng-submit="search()" name="streetSearch">
+      <input focusable has-focus="{{searchActive}}" id="business-search" class="inherit" type="text" placeholder="Hot Dog Heaven" ng-model="$parent.businessName" name="businessName" value="" typeahead="b for b in $parent.businessNames | filter:$viewValue | limitTo: 12" typeahead-on-select="$parent.search($item, $model, $label)"/>
+      <button type="submit" class="hide"></button>
+    </form>
+  </div>
+</section>
