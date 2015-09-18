@@ -14,6 +14,6 @@ production:
   adapter: postgresql
   encoding: utf8
   reconnect: false
-  database: ratings_development
+  database: caveat_production
   pool: 5
   username: adamb
