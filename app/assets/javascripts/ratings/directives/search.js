@@ -15,7 +15,7 @@ angular.module('ratings-search', [])
     }
   };
 })
-.directive('focusable', function($timeout, $parse) {
+.directive('focusable', function() {
   return {
     priority: 0,
     restrict: 'A',

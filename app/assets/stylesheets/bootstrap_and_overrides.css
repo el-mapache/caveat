@@ -313,6 +313,39 @@ img[src*="iws3.png"] {
   color: #CADE5C;
 }
 
+.rat-average {
+  position: absolute;
+  top: 23%;
+  left: 30%;
+  font-size: 26px;
+  text-shadow: -2px -2px black;
+  -moz-text-shadow: -2px -2px black;
+  -webkit-text-shadow: -2px -2px black;
+}
+
+.close-button {
+  margin-top: 5px;
+  background: transparent;
+  outline: 0;
+  border: 2px solid #333;
+  padding: 8px;
+  -webkit-transition: box-shadow 0.22s, border-bottom 0.2s;
+  transition: box-shadow 0.22s, border-bottom 0.2s;
+  display: inline-block;
+  margin-bottom: 0px;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #333333;
+}
+
+.close-button:hover {
+  background: transparent;
+  box-shadow: 0px 2px 1px rgba(0,0,0,0.5);
+  border-bottom: 3px solid #333;
+}
+
 /* TYPE */
 .serif {
   font-family: 'Merriweather', Georgia, serif;

@@ -81,7 +81,7 @@ angular.module("cWindow", [
 						  BroadcastService.broadcast("HideBusiness");
 					  }
 
-						$(".ratings-link").off();
+						$(".ratings-link").off('click');
 					});
 
 					$rootScope.$on("DestroyContentWindow", function() {

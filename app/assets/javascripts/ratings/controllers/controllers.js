@@ -40,7 +40,7 @@
       var gls = GeolocationService;
 
       // Determine if geolocation is available in the users browser.
-      if (!GeolocationService.isSupported()) { 
+      if (!GeolocationService.isSupported()) {
         $scope.active = false;
         $scope.error = {
           hasError: true,
@@ -65,7 +65,7 @@
         // Overriding for now to force location to the center of san francisco.
         gls.getCurrentPosition = (function(onSuccess) {
           gls.updateCurrentPosition({
-            latitude: 37.778146, 
+            latitude: 37.778146,
             longitude: -122.4084693
           });
           onSuccess(gls.currentPosition);
@@ -73,7 +73,7 @@
       };
 
       $scope._showSpinner = function() {
-        var spinner = new Spinner({
+        new Spinner({
           lines: 13,
           length: 10,
           width: 5,
@@ -92,7 +92,6 @@
         });
 
         // Promise callbacks will never be executed without an $apply here
-        //$scope.$apply()
 
         request.success(function(data, status, headers, config) {
           dialog.close();
@@ -129,7 +128,9 @@
       $scope.businessObj = businessObj;
       $scope.average = $scope.businessObj.average_score;
 
-      if (!$scope.showBusiness) $scope.toggleBusinessWindow();
+      if (!$scope.showBusiness) {
+        $scope.toggleBusinessWindow();
+      }
 
       $scope.$apply();
     });

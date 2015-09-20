@@ -5,6 +5,7 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
    * @param {Object} opts Passes configuration options - content,
    *   offsetVertical, offsetHorizontal, className, height, width
    */
+
   function InfoBox(opts) {
     google.maps.OverlayView.call(this);
     this._latlng = opts.latlng;
@@ -14,12 +15,15 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
     this._height = 74;
     this._width = 220;
     this.content = opts.content || "";
-    var me = this;
 
-    this._onBoundsChange = google.maps.event.addListener(this._map, "bounds_changed", function() {
-      return me.panMap.apply(me);
-    });
-    
+    var _this = this;
+
+    function onBoundsChange() {
+      return _this.panMap.apply(_this);
+    }
+
+    this._onBoundsChange = google.maps.event.addListener(this._map, "bounds_changed", onBoundsChange);
+
     // Once the properties of this OverlayView are initialized, set its map so
     // that we can display it.  This will trigger calls to panes_changed and
     // draw.
@@ -40,28 +44,33 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
       this.setMap(null);
     }
   };
-  
-  // Dynmically assign the wrapper once the inner div's contents have been filled in
-  
+
+  // Dynamically assign the wrapper once the inner div's contents have been filled in
   InfoBox.prototype._resizeWindowWrapper = function(evt, marker) {
     var wrapper = this._div;
 
     wrapper.style.height = this._div.querySelector(".info-window").clientHeight +"px";
     wrapper.style.width = this._div.querySelector(".info-window").clientWidth + "px";
   };
-  
+
   /* Redraw the Bar based on the current projection and zoom level
    */
   InfoBox.prototype.draw = function() {
     var div;
     // Creates the element if it doesn't exist already.
     this.createElement();
-    if (!this._div) return;
+
+    if (!this._div) {
+      return;
+    }
 
     // Calculate the DIV coordinates of two opposite corners of our bounds to
     // get the size and position of our Bar
     var pixPosition = this.getProjection().fromLatLngToDivPixel(this._latlng);
-    if (!pixPosition) return;
+
+    if (!pixPosition) {
+      return;
+    }
 
     // Now position our DIV based on the DIV coordinates of our bounds
     div = this._div;
@@ -112,7 +121,7 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
       panes.floatPane.appendChild(div);
       this.panMap();
 
-    } else if (div.parentNode != panes.floatPane) {
+    } else if (div.parentNode !== panes.floatPane) {
       // The panes have changed.  Move the div.
       div.parentNode.removeChild(div);
       panes.floatPane.appendChild(div);
@@ -127,7 +136,10 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
     // if we go beyond map, pan map
     var map = this._map,
         bounds = map.getBounds();
-    if (!bounds) return;
+
+    if (!bounds) {
+      return;
+    }
 
     // The position of the infowindow
     var position = this._latlng;
@@ -186,7 +198,7 @@ angular.module("InfoWindow",[]).factory("InfoWindow",function() {
 
     // Remove the listener after panning is complete.
     google.maps.event.removeListener(this._onBoundsChange);
-    this.onBoundsChange = null;
+    this._onBoundsChange = null;
   };
 
   return InfoBox;

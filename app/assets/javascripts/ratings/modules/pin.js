@@ -1,4 +1,4 @@
-angular.module("Pin",[
+angular.module("Pin", [
   'InfoWindow',
   'BroadcastService'
 ]).factory("Pin", function(InfoWindow, BroadcastService) {
@@ -18,8 +18,12 @@ angular.module("Pin",[
       this.active = false;
       this.removeWindow();
     } else {
-      var infoWindow = new InfoWindow({latlng: this.getPosition(), map: this.map, content: template});
-      this.infoWindow = infoWindow;
+      this.infoWindow = new InfoWindow({
+        latlng: this.getPosition(),
+        map: this.map,
+        content: template
+      });
+
       this.active = true;
     }
   };
@@ -31,7 +35,9 @@ angular.module("Pin",[
   };
 
   Pin.prototype.removeWindow = function() {
-    if (!this.infoWindow) return;
+    if (!this.infoWindow) {
+      return;
+    }
 
     this.infoWindow.remove();
     this.infoWindow = null;
@@ -40,4 +46,3 @@ angular.module("Pin",[
 
   return Pin;
 });
-

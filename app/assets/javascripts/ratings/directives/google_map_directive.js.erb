@@ -13,6 +13,9 @@ angular.module("google-map", [
     mapTypeId: 'road'
   };
 
+  var NORMAL_ICON = "<%= asset_path('normal_marker.svg') %>";
+  var WARNING_ICON = "<%= asset_path('warning_marker.svg') %>";
+  var DANGER_ICON = "<%= asset_path('danger_marker.svg') %>";
   /*
    * Creates either a new styled map from a hash of options,
    * or a prestyled Stamen map.
@@ -78,7 +81,9 @@ angular.module("google-map", [
         $scope.refresh();
 
         for (itr; itr < dataLen; itr++) {
-          if ($scope.existingMarkerList[data[itr].business.id]) continue;
+          if ($scope.existingMarkerList[data[itr].business.id]) {
+            continue;
+          }
 
           list[offset + itr] = data[itr];
 
@@ -112,24 +117,26 @@ angular.module("google-map", [
         $scope.map.panTo(new google.maps.LatLng(lat, lng));
 
         // Zoom in the map if a new zoom was specified.
-        if (!angular.isUndefined(zoom)) $scope.map.setZoom(zoom);
+        if (!angular.isUndefined(zoom)) {
+          $scope.map.setZoom(zoom);
+        }
       };
 
       $scope.addMarker = function(lat, lng, data, index) {
         var icon;
 
         if (data.score >= 90 || data.score == 0) {
-          icon = "<%= asset_path('normal_marker.svg') %>";
+          icon = NORMAL_ICON;
         } else if (data.score < 90 && data.score >= 70) {
-          icon = "<%= asset_path('warning_marker.svg') %>";
+          icon = WARNING_ICON;
         } else {
-          icon = "<%= asset_path('danger_marker.svg') %>";
+          icon = DANGER_ICON;
         }
 
         var marker = new Pin({
           map: $scope.map,
           draggable: false,
-          animation: google.maps.Animation.DROP,
+         // animation: google.maps.Animation.DROP,
           icon: icon,
           position: new google.maps.LatLng(lat, lng),
           enableEventPropagation: true
